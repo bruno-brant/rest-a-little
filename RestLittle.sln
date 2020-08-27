@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestLittle", "src\RestLittle\RestLittle.csproj", "{524D10C3-E18B-4560-951E-690B9953A274}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestLittle.Tests", "test\RestLittle.Tests\RestLittle.Tests.csproj", "{13E62DD2-59DC-4F57-A215-477381CE6A37}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BEA915C0-8834-4928-B403-28B70F475A70}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{2C33655E-7C68-4127-8AA8-B21B08C9DA24}"
+	ProjectSection(SolutionItems) = preProject
+		test\.editorconfig = test\.editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E167D86A-23E9-44A0-BAF3-C550BA49E4AA}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		README.md = README.md
+		stylecop.json = stylecop.json
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestLittle.CLI", "src\RestLittle.CLI\RestLittle.CLI.csproj", "{6184C221-E8C5-4A71-8B90-6E9466016DA2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestLittle.UI", "src\RestLittle.UI\RestLittle.UI.csproj", "{7D2C12CE-7D96-4539-97CC-DFA5DA6B58C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{524D10C3-E18B-4560-951E-690B9953A274}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{524D10C3-E18B-4560-951E-690B9953A274}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{524D10C3-E18B-4560-951E-690B9953A274}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{524D10C3-E18B-4560-951E-690B9953A274}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13E62DD2-59DC-4F57-A215-477381CE6A37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13E62DD2-59DC-4F57-A215-477381CE6A37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13E62DD2-59DC-4F57-A215-477381CE6A37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13E62DD2-59DC-4F57-A215-477381CE6A37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6184C221-E8C5-4A71-8B90-6E9466016DA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6184C221-E8C5-4A71-8B90-6E9466016DA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6184C221-E8C5-4A71-8B90-6E9466016DA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6184C221-E8C5-4A71-8B90-6E9466016DA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D2C12CE-7D96-4539-97CC-DFA5DA6B58C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D2C12CE-7D96-4539-97CC-DFA5DA6B58C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D2C12CE-7D96-4539-97CC-DFA5DA6B58C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D2C12CE-7D96-4539-97CC-DFA5DA6B58C5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{524D10C3-E18B-4560-951E-690B9953A274} = {BEA915C0-8834-4928-B403-28B70F475A70}
+		{13E62DD2-59DC-4F57-A215-477381CE6A37} = {2C33655E-7C68-4127-8AA8-B21B08C9DA24}
+		{6184C221-E8C5-4A71-8B90-6E9466016DA2} = {BEA915C0-8834-4928-B403-28B70F475A70}
+		{7D2C12CE-7D96-4539-97CC-DFA5DA6B58C5} = {BEA915C0-8834-4928-B403-28B70F475A70}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D53DA21C-E4FC-4FC9-A5B2-F84CAD674E10}
+	EndGlobalSection
+EndGlobal

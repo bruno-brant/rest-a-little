@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RestLittle</name>
+    </assembly>
+    <members>
+        <member name="T:RestLittle.IInputManager">
+            <summary>
+            Objects capable of obtaining input information.
+            </summary>
+        </member>
+        <member name="M:RestLittle.IInputManager.GetLastInputTime">
+            <summary>
+                Gets the time when the user last used the mouse or the keyboard.
+            </summary>
+            <returns>
+                A DateTime instance of the last time the user used the input devices.
+            </returns>
+        </member>
+        <member name="T:RestLittle.InputManager">
+            <inheritdoc/>
+        </member>
+        <member name="M:RestLittle.InputManager.GetLastInputTime">
+            <inheritdoc/>
+        </member>
+        <member name="T:RestLittle.IUserIdleMonitor">
+            <summary>
+            Monitors if the user has rested a little in a certain interval.
+            </summary>
+        </member>
+        <member name="M:RestLittle.IUserIdleMonitor.GetStatus">
+            <summary>
+                Gets the current usage status of the computer.
+            </summary>
+            <returns>
+               <see cref="F:RestLittle.UserStatus.Busy"/> if the user is using the computer,
+               <see cref="F:RestLittle.UserStatus.Idle"/> otherwise.
+            </returns>
+        </member>
+        <member name="T:RestLittle.NativeMethods">
+            <summary>
+            External functions.
+            </summary>
+        </member>
+        <member name="M:RestLittle.NativeMethods.GetLastInputInfo(RestLittle.NativeMethods.LASTINPUTINFO@)">
+            <summary>
+            Retrieves the time of the last input event.
+            </summary>
+            <param name="plii">
+            A pointer to a LASTINPUTINFO structure that receives the time of the last input event.
+            </param>
+            <returns>
+            If the function succeeds, the return value is true.
+            If the function fails, the return value is false.
+            </returns>
+        </member>
+        <member name="T:RestLittle.NativeMethods.LASTINPUTINFO">
+            <summary>
+            Contains the time of the last input.
+            </summary>
+        </member>
+        <member name="F:RestLittle.NativeMethods.LASTINPUTINFO.Size">
+            <summary>
+            Gets the value of sizeof(LASTINPUTINFO).
+            </summary>
+        </member>
+        <member name="F:RestLittle.NativeMethods.LASTINPUTINFO.cbSize">
+            <summary>
+            The size of the structure, in bytes. This member must be set to sizeof(LASTINPUTINFO).
+            </summary>
+        </member>
+        <member name="F:RestLittle.NativeMethods.LASTINPUTINFO.dwTime">
+            <summary>
+            The tick count when the last input event was received.
+            </summary>
+        </member>
+        <member name="P:RestLittle.NativeMethods.LASTINPUTINFO.DwTime">
+            <summary>
+            Gets or sets the tick count when the last input event was received.
+            </summary>
+        </member>
+        <member name="P:RestLittle.NativeMethods.LASTINPUTINFO.CbSize">
+            <summary>
+            Gets or sets the size of the structure, in bytes. This member must be set to sizeof(LASTINPUTINFO).
+            </summary>
+        </member>
+        <member name="T:RestLittle.RestingMonitor">
+            <summary>
+            Checks whether the user is properly rested.
+            </summary>
+        </member>
+        <member name="M:RestLittle.RestingMonitor.#ctor(RestLittle.RestingMonitorConfiguration,RestLittle.IUserIdleMonitor)">
+            <summary>
+                Initializes a new instance of the <see cref="T:RestLittle.RestingMonitor"/> class.
+            </summary>
+            <param name="configuration">
+                Configuration of this service.
+            </param>
+            <param name="userIdleMonitor">
+                Used to check whether the user is currently idle or is busy.
+            </param>
+        </member>
+        <member name="P:RestLittle.RestingMonitor.LastStatus">
+            <summary>
+            Gets current status of the user.
+            </summary>
+        </member>
+        <member name="P:RestLittle.RestingMonitor.TimeSinceLastStatus">
+            <summary>
+            Gets time passed since the last status is the current.
+            </summary>
+        </member>
+        <member name="P:RestLittle.RestingMonitor.TotalIdleTimeSinceRested">
+            <summary>
+            Gets the accumulated RESTING time since the user was last considered rested.
+            </summary>
+            <remarks>
+            User is considered rested once he's idle for at least
+            <see cref="P:RestLittle.RestingMonitorConfiguration.RestTimePerBusyTime"/>.
+            </remarks>
+        </member>
+        <member name="P:RestLittle.RestingMonitor.TotalBusyTimeSinceRested">
+            <summary>
+            Gets the accumulated WORKING time since the user was last considered rested.
+            </summary>
+            <remarks>
+            User is considered rested once he's idle for at least
+            <see cref="P:RestLittle.RestingMonitorConfiguration.RestTimePerBusyTime"/>.
+            </remarks>
+        </member>
+        <member name="P:RestLittle.RestingMonitor.MustRest">
+            <summary>
+            Gets a value indicating whether the user must rest.
+            </summary>
+        </member>
+        <member name="M:RestLittle.RestingMonitor.Update(System.TimeSpan)">
+            <summary>
+                Updates the current status.
+            </summary>
+            <param name="elapsed">
+                How much time elapsed since the last update.
+            </param>
+        </member>
+        <member name="M:RestLittle.RestingMonitor.IncrementStatus(RestLittle.UserStatus,System.TimeSpan)">
+            <summary>
+                Increments the timer accordingly to the provided status.
+            </summary>
+            <param name="status">
+                The current status of the user.
+            </param>
+            <param name="elapsed">
+                The amount of time the user has elapsed on this status.
+            </param>
+        </member>
+        <member name="T:RestLittle.RestingMonitorConfiguration">
+            <summary>
+            Configuration for <see cref="T:RestLittle.UserIdleMonitor"/>.
+            </summary>
+        </member>
+        <member name="P:RestLittle.RestingMonitorConfiguration.MaxBusyTime">
+            <summary>
+            Gets or sets maximum amount of time using the computer without rest.
+            </summary>
+        </member>
+        <member name="P:RestLittle.RestingMonitorConfiguration.RestTimePerBusyTime">
+            <summary>
+            Gets or sets how long the user must rest in a interval of maxBusyTime.
+            </summary>
+        </member>
+        <member name="P:RestLittle.RestingMonitorConfiguration.InitialStatus">
+            <summary>
+            Gets or sets the initial status of the <see cref="T:RestLittle.RestingMonitor"/>.
+            </summary>
+        </member>
+        <member name="T:RestLittle.UserIdleMonitor">
+            <inheritdoc/>
+        </member>
+        <member name="M:RestLittle.UserIdleMonitor.#ctor(RestLittle.UserIdleMonitorConfiguration,RestLittle.IInputManager)">
+            <summary>
+                Initializes a new instance of the <see cref="T:RestLittle.UserIdleMonitor"/> class.
+            </summary>
+            <param name="configuration">
+                The configuration for the monitor.
+            </param>
+            <param name="inputManager">
+                Allows to check the last time the user has used an input device.
+            </param>
+        </member>
+        <member name="M:RestLittle.UserIdleMonitor.GetStatus">
+            <inheritdoc/>
+        </member>
+        <member name="T:RestLittle.UserIdleMonitorConfiguration">
+            <summary>
+            Configuration for service <see cref="T:RestLittle.UserIdleMonitor"/>.
+            </summary>
+        </member>
+        <member name="P:RestLittle.UserIdleMonitorConfiguration.MinTimeToIdle">
+            <summary>
+            Gets or sets the minimum amount of time without using the computer that is considered to be idle.
+            </summary>
+        </member>
+        <member name="T:RestLittle.UserStatus">
+            <summary>
+            Informs if the user is using the computer or not.
+            </summary>
+        </member>
+        <member name="F:RestLittle.UserStatus.Idle">
+            <summary>
+            The user is idle.
+            </summary>
+        </member>
+        <member name="F:RestLittle.UserStatus.Busy">
+            <summary>
+            The user is busy.
+            </summary>
+        </member>
+    </members>
+</doc>

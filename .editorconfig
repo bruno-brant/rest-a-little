@@ -1,0 +1,24 @@
+﻿[*.cs]
+
+## General Settings ##
+
+charset = utf-8
+
+## StyleCop Analyzer ##
+
+# SA1005: Single line comments should begin with single space
+dotnet_diagnostic.SA1005.severity = none
+
+# SA1101: Prefix local calls with this - to keep code concise, we disable it
+dotnet_diagnostic.SA1101.severity = none
+
+# SA1309: Field names should not begin with underscore - The current style is to prefix private elements with an _
+dotnet_diagnostic.SA1309.severity = none
+
+## Code Analysis ##
+
+# CA1303: Do not pass literals as localized parameters - O sistema será apenas para a audiência brasileira.
+dotnet_diagnostic.CA1303.severity = none
+
+# CA2007: Consider calling ConfigureAwait on the awaited task - disabled since this isn't a GUI project
+dotnet_diagnostic.CA2007.severity = none
