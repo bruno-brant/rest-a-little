@@ -17,7 +17,7 @@ namespace RestLittle.UI
 				new RestingMonitor(
 					new RestingMonitorConfiguration
 					{
-						InitialStatus = UserStatus.Idle,
+						InitialStatus = RestLittle.UserStatus.Idle,
 						MaxBusyTime = TimeSpan.FromMinutes(30),
 						RestTimePerBusyTime = TimeSpan.FromMinutes(5),
 					},
@@ -46,11 +46,11 @@ namespace RestLittle.UI
 
 			switch (_restingMonitor.LastStatus)
 			{
-				case UserStatus.Idle:
+				case RestLittle.UserStatus.Idle:
 					_trayIcon.SetStatus($"User has been idle for {idleMinutes:N0} minutes.");
 					break;
 
-				case UserStatus.Busy:
+				case RestLittle.UserStatus.Busy:
 					_trayIcon.SetStatus($"User has been busy for {idleMinutes:N0} minutes.");
 					break;
 

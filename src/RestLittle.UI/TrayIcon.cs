@@ -10,6 +10,8 @@ namespace RestLittle.UI
 {
 	public partial class TrayIcon : UserControl
 	{
+		private UserStatus _status;
+
 		/// <summary>
 		/// The user asked the application to close.
 		/// </summary>
@@ -20,7 +22,6 @@ namespace RestLittle.UI
 			InitializeComponent();
 
 			_exitMenuItem.Click += new EventHandler(ExitMenuItem_Click);
-
 		}
 
 		private void ExitMenuItem_Click(object sender, EventArgs e)
@@ -65,6 +66,28 @@ namespace RestLittle.UI
 		public void SetStatus(string text)
 		{
 			notifyIcon1.Text = text;
+		}
+
+		public UserStatus Status
+		{
+			get => _status; set
+			{
+				var old = _status;
+				_status = value;
+
+				OnStatusChanged(_status);
+			}
+		}
+
+		private void OnStatusChanged(UserStatus newStatus)
+		{
+			notifyIcon1.Icon = newStatus switch
+			{
+				UserStatus.Tired => (Icon)Resource.ResourceManager.GetObject("tired.ico"),
+				UserStatus.Busy => (Icon)Resource.ResourceManager.GetObject("busy.ico"),
+				UserStatus.Resting => (Icon)Resource.ResourceManager.GetObject("resting.ico"),
+				_ => throw new ArgumentOutOfRangeException(nameof(newStatus), newStatus, "Unknown status."),
+			};
 		}
 	}
 }
