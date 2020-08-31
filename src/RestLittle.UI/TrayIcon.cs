@@ -1,15 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 
 namespace RestLittle.UI
 {
 	public partial class TrayIcon : UserControl
 	{
+		/// <summary>
+		/// The current status of the user.
+		/// </summary>
 		private UserStatus _status;
 
 		/// <summary>
@@ -70,9 +69,10 @@ namespace RestLittle.UI
 
 		public UserStatus Status
 		{
-			get => _status; set
+			get => _status;
+
+			set
 			{
-				var old = _status;
 				_status = value;
 
 				OnStatusChanged(_status);
@@ -83,11 +83,23 @@ namespace RestLittle.UI
 		{
 			notifyIcon1.Icon = newStatus switch
 			{
-				UserStatus.Tired => (Icon)Resource.ResourceManager.GetObject("tired.ico"),
-				UserStatus.Busy => (Icon)Resource.ResourceManager.GetObject("busy.ico"),
-				UserStatus.Resting => (Icon)Resource.ResourceManager.GetObject("resting.ico"),
+				UserStatus.Tired => GetIcon("tired"),
+				UserStatus.Active => GetIcon("busy"),
+				UserStatus.Resting => GetIcon("resting"),
 				_ => throw new ArgumentOutOfRangeException(nameof(newStatus), newStatus, "Unknown status."),
 			};
+		}
+
+		private Icon GetIcon(string name)
+		{
+			var obj = Resource.ResourceManager.GetObject(name);
+
+			if (obj == null)
+			{
+				throw new Exception("Couldn't find the icon.");
+			}
+
+			return (Icon)obj;
 		}
 	}
 }

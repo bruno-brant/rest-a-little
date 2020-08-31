@@ -1,15 +1,17 @@
 using System;
-using System.Configuration;
 using System.Windows.Forms;
 
 namespace RestLittle.UI
 {
+	/// <summary>
+	/// This class acts like a controller for the application.
+	/// </summary>
 	public class RestLittleApplicationContext : ApplicationContext
 	{
 		private readonly TrayIcon _trayIcon = new TrayIcon();
 		private readonly Timer _timer = new Timer
 		{
-			Interval = 1000,
+			Interval = 2000,
 		};
 
 		// bootstrap monitor
@@ -27,6 +29,16 @@ namespace RestLittle.UI
 							MinTimeToIdle = TimeSpan.FromSeconds(45),
 						},
 						new InputManager()));
+		
+		/// <summary>
+		/// The time when we last issued an warning.
+		/// </summary>
+		private DateTime _lastWarning = DateTime.MinValue;
+		
+		/// <summary>
+		/// How long to wait between intervals.
+		/// </summary>
+		private readonly TimeSpan _warningInterval = TimeSpan.FromSeconds(30);
 
 		public RestLittleApplicationContext()
 		{
@@ -41,27 +53,31 @@ namespace RestLittle.UI
 		{
 			_restingMonitor.Update(TimeSpan.FromMilliseconds(_timer.Interval));
 
-			var busyMinutes = _restingMonitor.TotalBusyTimeSinceRested.TotalMinutes;
-			var idleMinutes = _restingMonitor.TotalIdleTimeSinceRested.TotalMinutes;
+			var busyElapsed = _restingMonitor.TotalBusyTimeSinceRested.ToString(@"mm\:ss");
+			var idleElapsed = _restingMonitor.TotalIdleTimeSinceRested.ToString(@"mm\:ss"); 
 
 			switch (_restingMonitor.LastStatus)
 			{
 				case RestLittle.UserStatus.Idle:
-					_trayIcon.SetStatus($"User has been idle for {idleMinutes:N0} minutes.");
+					_trayIcon.Status = UserStatus.Resting;
+					_trayIcon.SetStatus($"User has been idle for {idleElapsed}.");
 					break;
 
 				case RestLittle.UserStatus.Busy:
-					_trayIcon.SetStatus($"User has been busy for {idleMinutes:N0} minutes.");
+					_trayIcon.Status = UserStatus.Active;
+					_trayIcon.SetStatus($"User has been busy for {busyElapsed}.");
 					break;
 
 				default:
 					throw new Exception($"unknown status '{_restingMonitor.LastStatus}'");
 			}
 
-			if (_restingMonitor.MustRest)
+			if (_restingMonitor.MustRest && _lastWarning.UntilNow() > _warningInterval)
 			{
-				var tipText = $"Please go rest! You haven't rested for {busyMinutes:N0} minutes.";
+				var tipText = $"Please go rest! You haven't rested for {busyElapsed} minutes.";
 				_trayIcon.ShowBalloonTip(5000, "Must rest!", tipText, ToolTipIcon.Warning);
+
+				_lastWarning = DateTime.Now;
 			}
 		}
 

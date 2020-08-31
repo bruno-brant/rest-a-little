@@ -29,7 +29,6 @@ namespace RestLittle.UI
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TrayIcon));
 			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
 			this._trayIconMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._configurationMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,7 +40,6 @@ namespace RestLittle.UI
 			// notifyIcon1
 			// 
 			this.notifyIcon1.ContextMenuStrip = this._trayIconMenuStrip;
-			this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
 			this.notifyIcon1.Text = "Rest-a-Little";
 			this.notifyIcon1.Visible = true;
 			// 
