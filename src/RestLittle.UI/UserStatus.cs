@@ -1,3 +1,5 @@
+// Copyright (c) Bruno Brant. All rights reserved.
+
 namespace RestLittle.UI
 {
 	public enum UserStatus
