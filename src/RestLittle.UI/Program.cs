@@ -8,18 +8,24 @@ using System.Windows.Forms;
 
 namespace RestLittle.UI
 {
-	static class Program
+	/// <summary>
+	/// Main program entry point.
+	/// </summary>
+	public static class Program
 	{
 		/// <summary>
 		///  The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main()
+		private static void Main()
 		{
 			Application.SetHighDpiMode(HighDpiMode.SystemAware);
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new RestLittleApplicationContext());
+
+			using var context = new RestLittleApplicationContext();
+
+			Application.Run(context);
 		}
 	}
 }

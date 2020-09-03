@@ -1,6 +1,6 @@
 namespace RestLittle.UI
 {
-	partial class ConfigurationForm
+	partial class ConfigurationView
 	{
 		/// <summary>
 		/// Required designer variable.

@@ -7,6 +7,14 @@
 		<ApplicationIcon>Resources/resting.ico</ApplicationIcon>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Version>0.1.0</Version>
+		<RepositoryUrl>https://github.com/bruno-brant/rest-a-little</RepositoryUrl>
+		<RepositoryType>Git</RepositoryType>
+		<NeutralLanguage>en-US</NeutralLanguage>
+	</PropertyGroup>
+	
 	<ItemGroup>
 		<AdditionalFiles Include="..\..\stylecop.json" Link="stylecop.json" />
 	</ItemGroup>
@@ -40,7 +48,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Views\" />
+	  <None Include="Assets\resting-worker-at-work.png">
+	    <Pack>True</Pack>
+	    <PackagePath></PackagePath>
+	  </None>
 	</ItemGroup>
 
 

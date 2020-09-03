@@ -1,6 +1,6 @@
-namespace RestLittle.UI
+namespace RestLittle.UI.Views
 {
-	partial class TrayIcon
+	partial class TrayIconView
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -29,7 +29,7 @@ namespace RestLittle.UI
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+			this._notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
 			this._trayIconMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._configurationMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -37,11 +37,11 @@ namespace RestLittle.UI
 			this._trayIconMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// notifyIcon1
+			// _notifyIcon1
 			// 
-			this.notifyIcon1.ContextMenuStrip = this._trayIconMenuStrip;
-			this.notifyIcon1.Text = "Rest-a-Little";
-			this.notifyIcon1.Visible = true;
+			this._notifyIcon1.ContextMenuStrip = this._trayIconMenuStrip;
+			this._notifyIcon1.Text = "Rest-a-Little";
+			this._notifyIcon1.Visible = true;
 			// 
 			// _trayIconMenuStrip
 			// 
@@ -70,11 +70,11 @@ namespace RestLittle.UI
 			this._exitMenuItem.Size = new System.Drawing.Size(148, 22);
 			this._exitMenuItem.Text = "&Exit";
 			// 
-			// TrayIcon
+			// TrayIconView
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Name = "TrayIcon";
+			this.Name = "TrayIconView";
 			this.Size = new System.Drawing.Size(350, 234);
 			this._trayIconMenuStrip.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -83,7 +83,7 @@ namespace RestLittle.UI
 
 		#endregion
 
-		private System.Windows.Forms.NotifyIcon notifyIcon1;
+		private System.Windows.Forms.NotifyIcon _notifyIcon1;
 		private System.Windows.Forms.ContextMenuStrip _trayIconMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem _exitMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem _configurationMenuItem;

@@ -2,6 +2,9 @@
 
 using System;
 using System.Windows.Forms;
+using RestLittle.UI.Models;
+using RestLittle.UI.Presenters;
+using RestLittle.UI.Views;
 
 namespace RestLittle.UI
 {
@@ -10,91 +13,37 @@ namespace RestLittle.UI
 	/// </summary>
 	public class RestLittleApplicationContext : ApplicationContext
 	{
-		private readonly TrayIcon _trayIcon = new TrayIcon();
-		private readonly Timer _timer = new Timer
-		{
-			Interval = 2000,
-		};
+		private readonly TrayIconView _trayIconView;
+		private readonly TrayIconModel _trayIconModel;
+		private readonly TrayIconPresenter _trayIconPresenter;
 
-		// bootstrap monitor
-		private readonly RestingMonitor _restingMonitor =
-				new RestingMonitor(
-					new RestingMonitorConfiguration
-					{
-						InitialStatus = RestLittle.UserStatus.Idle,
-						MaxBusyTime = TimeSpan.FromMinutes(30),
-						RestTimePerBusyTime = TimeSpan.FromMinutes(5),
-					},
-					new UserIdleMonitor(
-						new UserIdleMonitorConfiguration
-						{
-							MinTimeToIdle = TimeSpan.FromSeconds(45),
-						},
-						new InputManager()));
-		
 		/// <summary>
-		/// The time when we last issued an warning.
+		/// Initializes a new instance of the <see cref="RestLittleApplicationContext"/> class.
 		/// </summary>
-		private DateTime _lastWarning = DateTime.MinValue;
-		
-		/// <summary>
-		/// How long to wait between intervals.
-		/// </summary>
-		private readonly TimeSpan _warningInterval = TimeSpan.FromSeconds(30);
-
 		public RestLittleApplicationContext()
 		{
-			_trayIcon.Close += TrayIcon_Close;
+			_trayIconView = new TrayIconView();
+			_trayIconModel = new TrayIconModel();
+			_trayIconPresenter = new TrayIconPresenter(_trayIconView, _trayIconModel);
 
-			_timer.Tick += Timer_Tick;
-
-			_timer.Start();
+			_trayIconPresenter.ExitClicked += TrayIconPresenter_ExitClicked;
 		}
 
-		private void Timer_Tick(object sender, EventArgs e)
-		{
-			_restingMonitor.Update(TimeSpan.FromMilliseconds(_timer.Interval));
-
-			var busyElapsed = _restingMonitor.TotalBusyTimeSinceRested.ToString(@"mm\:ss");
-			var idleElapsed = _restingMonitor.TotalIdleTimeSinceRested.ToString(@"mm\:ss"); 
-
-			switch (_restingMonitor.LastStatus)
-			{
-				case RestLittle.UserStatus.Idle:
-					_trayIcon.Status = UserStatus.Resting;
-					_trayIcon.SetStatus($"User has been idle for {idleElapsed}.");
-					break;
-
-				case RestLittle.UserStatus.Busy:
-					_trayIcon.Status = UserStatus.Active;
-					_trayIcon.SetStatus($"User has been busy for {busyElapsed}.");
-					break;
-
-				default:
-					throw new Exception($"unknown status '{_restingMonitor.LastStatus}'");
-			}
-
-			if (_restingMonitor.MustRest && _lastWarning.UntilNow() > _warningInterval)
-			{
-				var tipText = $"Please go rest! You haven't rested for {busyElapsed} minutes.";
-				_trayIcon.ShowBalloonTip(5000, "Must rest!", tipText, ToolTipIcon.Warning);
-
-				_lastWarning = DateTime.Now;
-			}
-		}
-
-		private void TrayIcon_Close(object sender, EventArgs e)
-		{
-			_timer.Stop();
-			ExitThread();
-		}
-
+		/// <inheritdoc/>
 		protected override void Dispose(bool disposing)
 		{
-			_trayIcon.Dispose();
-			_timer.Dispose();
+			if (disposing)
+			{
+				_trayIconView.Dispose();
+				_trayIconModel.Dispose();
+			}
 
 			base.Dispose(disposing);
+		}
+
+		private void TrayIconPresenter_ExitClicked(object sender, EventArgs e)
+		{
+			ExitThread();
 		}
 	}
 }

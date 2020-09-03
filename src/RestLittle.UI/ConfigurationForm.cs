@@ -10,9 +10,15 @@ using System.Windows.Forms;
 
 namespace RestLittle.UI
 {
-	public partial class ConfigurationForm : Form
+	/// <summary>
+	/// Displays a configuration form for the user.
+	/// </summary>
+	public partial class ConfigurationView : Form
 	{
-		public ConfigurationForm()
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ConfigurationView"/> class.
+		/// </summary>
+		public ConfigurationView()
 		{
 			InitializeComponent();
 		}

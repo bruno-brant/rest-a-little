@@ -7,7 +7,7 @@ namespace RestLittle.CLI
 	{
 		static void Main(string[] args)
 		{
-			var rest = 
+			var rest =
 				new RestingMonitor(
 					new RestingMonitorConfiguration
 					{
@@ -26,7 +26,7 @@ namespace RestLittle.CLI
 			{
 				Thread.Sleep(2000);
 				rest.Update(TimeSpan.FromMilliseconds(2000));
-				
+
 				var msg = $@"
 LastStatus: {rest.LastStatus}
 TimeSinceLastStatus: {rest.TimeSinceLastStatus:hh\:mm\:ss}

@@ -30,7 +30,7 @@ namespace RestLittle
 		}
 
 		/// <summary>
-		/// Gets current status of the user.
+		/// Gets the last status of the user.
 		/// </summary>
 		public UserStatus LastStatus { get; private set; }
 
