@@ -1,6 +1,7 @@
 // Copyright (c) Bruno Brant. All rights reserved.
 
 using System;
+using System.Collections.Generic;
 
 namespace RestLittle
 {
@@ -11,6 +12,20 @@ namespace RestLittle
 	{
 		private readonly RestingMonitorConfiguration _configuration;
 		private readonly IUserIdleMonitor _userIdleMonitor;
+
+		/// <summary>
+		///     Holds the statuses for elapsed time.
+		/// </summary>
+		/// <remarks>
+		///     While a dictionary is an overkill here, I used it to simplify my code
+		///     by being able to call _elapsed[Status] instead of having to switch
+		///     all the time.
+		/// </remarks>
+		private readonly Dictionary<UserStatus, TimeSpan> _elapsedTimeSinceRested = new Dictionary<UserStatus, TimeSpan>
+		{
+			[UserStatus.Busy] = TimeSpan.Zero,
+			[UserStatus.Idle] = TimeSpan.Zero,
+		};
 
 		/// <summary>
 		///     Initializes a new instance of the <see cref="RestingMonitor"/> class.
@@ -37,7 +52,7 @@ namespace RestLittle
 		/// <summary>
 		/// Gets time passed since the last status is the current.
 		/// </summary>
-		public TimeSpan TimeSinceLastStatus { get; private set; }
+		public TimeSpan TimeSinceLastStatus => _elapsedTimeSinceRested[LastStatus];
 
 		/// <summary>
 		/// Gets the accumulated RESTING time since the user was last considered rested.
@@ -46,16 +61,16 @@ namespace RestLittle
 		/// User is considered rested once he's idle for at least
 		/// <see cref="RestingMonitorConfiguration.RestTimePerBusyTime"/>.
 		/// </remarks>
-		public TimeSpan TotalIdleTimeSinceRested { get; private set; }
+		public TimeSpan TotalIdleTimeSinceRested => _elapsedTimeSinceRested[UserStatus.Idle];
 
 		/// <summary>
-		/// Gets the accumulated WORKING time since the user was last considered rested.
+		///     Gets the accumulated WORKING time since the user was last considered rested.
 		/// </summary>
 		/// <remarks>
-		/// User is considered rested once he's idle for at least
-		/// <see cref="RestingMonitorConfiguration.RestTimePerBusyTime"/>.
+		///     User is considered rested once he's idle for at least
+		///     <see cref="RestingMonitorConfiguration.RestTimePerBusyTime"/>.
 		/// </remarks>
-		public TimeSpan TotalBusyTimeSinceRested { get; private set; }
+		public TimeSpan TotalBusyTimeSinceRested => _elapsedTimeSinceRested[UserStatus.Busy];
 
 		/// <summary>
 		/// Gets a value indicating whether the user must rest.
@@ -66,62 +81,27 @@ namespace RestLittle
 		///     Updates the current status.
 		/// </summary>
 		/// <param name="elapsed">
-		///     How much time elapsed since the last update.
+		///     How much time elapsed since the last call to <see cref="Update(TimeSpan)"/>.
 		/// </param>
 		public void Update(TimeSpan elapsed)
 		{
 			var currentStatus = _userIdleMonitor.GetStatus();
 
+			// skip updating the elapsed time if this is the first time we get this status
+			// in this way, we avoid updating when the user was partially on the previous status
 			if (currentStatus == LastStatus)
 			{
-				TimeSinceLastStatus += elapsed;
-
-				// since the user is on the same status, increments it properly
-				IncrementStatus(currentStatus, elapsed);
+				_elapsedTimeSinceRested[currentStatus] += elapsed;
 			}
-			else
+
+			if (_elapsedTimeSinceRested[UserStatus.Busy] == TimeSpan.Zero
+				|| TotalIdleTimeSinceRested >= _configuration.RestTimePerBusyTime)
 			{
-				TimeSinceLastStatus = TimeSpan.Zero;
+				_elapsedTimeSinceRested[UserStatus.Busy] = TimeSpan.Zero;
+				_elapsedTimeSinceRested[UserStatus.Idle] = TimeSpan.Zero;
 			}
-
-			UpdateAccumulators();
 
 			LastStatus = currentStatus;
-		}
-
-		private void UpdateAccumulators()
-		{
-			if (TotalIdleTimeSinceRested >= _configuration.RestTimePerBusyTime)
-			{
-				TotalBusyTimeSinceRested = TimeSpan.Zero;
-				TotalIdleTimeSinceRested = TimeSpan.Zero;
-			}
-		}
-
-		/// <summary>
-		///     Increments the timer accordingly to the provided status.
-		/// </summary>
-		/// <param name="status">
-		///     The current status of the user.
-		/// </param>
-		/// <param name="elapsed">
-		///     The amount of time the user has elapsed on this status.
-		/// </param>
-		private void IncrementStatus(UserStatus status, TimeSpan elapsed)
-		{
-			switch (status)
-			{
-				case UserStatus.Idle:
-					TotalIdleTimeSinceRested += elapsed;
-					break;
-
-				case UserStatus.Busy:
-					TotalBusyTimeSinceRested += elapsed;
-					break;
-
-				default:
-					throw new ArgumentOutOfRangeException(nameof(elapsed), elapsed, "Unknown status");
-			}
 		}
 	}
 }

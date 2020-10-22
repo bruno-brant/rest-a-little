@@ -16,14 +16,14 @@ namespace RestLittle
 				CbSize = LASTINPUTINFO.Size,
 			};
 
-			if (GetLastInputInfo(ref lastInputInfo))
+			if (!GetLastInputInfo(ref lastInputInfo))
 			{
-				var lastInput = DateTime.Now.AddMilliseconds(-(Environment.TickCount - lastInputInfo.DwTime));
-
-				return lastInput;
+				throw new Exception("Couldn't get last time.");
 			}
 
-			throw new Exception("Couldn't get last time.");
+			var lastInput = DateTime.Now.AddMilliseconds(-(Environment.TickCount - lastInputInfo.DwTime));
+
+			return lastInput;
 		}
 	}
 }

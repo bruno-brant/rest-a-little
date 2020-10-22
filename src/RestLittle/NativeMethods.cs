@@ -1,6 +1,5 @@
 // Copyright (c) Bruno Brant. All rights reserved.
 
-using System;
 using System.Runtime.InteropServices;
 
 namespace RestLittle
@@ -22,6 +21,8 @@ namespace RestLittle
 		/// </returns>
 		[DllImport("user32.dll")]
 		public static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+
+#pragma warning disable IDE1006 // Naming Styles (interop)
 
 		/// <summary>
 		/// Contains the time of the last input.
@@ -56,5 +57,7 @@ namespace RestLittle
 			/// </summary>
 			public uint CbSize { get => cbSize; set => cbSize = value; }
 		}
+
+#pragma warning restore IDE1006 // Naming Styles (interop)
 	}
 }

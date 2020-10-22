@@ -14,7 +14,7 @@
                 Gets the time when the user last used the mouse or the keyboard.
             </summary>
             <returns>
-                A DateTime instance of the last time the user used the input devices.
+                A <see cref="T:System.DateTime"/> instance of the last time the user used the input devices.
             </returns>
         </member>
         <member name="T:RestLittle.InputManager">
@@ -89,6 +89,16 @@
             Checks whether the user is properly rested.
             </summary>
         </member>
+        <member name="F:RestLittle.RestingMonitor._elapsedTimeSinceRested">
+            <summary>
+                Holds the statuses for elapsed time.
+            </summary>
+            <remarks>
+                While a dictionary is an overkill here, I used it to simplify my code
+                by being able to call _elapsed[Status] instead of having to switch
+                all the time.
+            </remarks>
+        </member>
         <member name="M:RestLittle.RestingMonitor.#ctor(RestLittle.RestingMonitorConfiguration,RestLittle.IUserIdleMonitor)">
             <summary>
                 Initializes a new instance of the <see cref="T:RestLittle.RestingMonitor"/> class.
@@ -121,11 +131,11 @@
         </member>
         <member name="P:RestLittle.RestingMonitor.TotalBusyTimeSinceRested">
             <summary>
-            Gets the accumulated WORKING time since the user was last considered rested.
+                Gets the accumulated WORKING time since the user was last considered rested.
             </summary>
             <remarks>
-            User is considered rested once he's idle for at least
-            <see cref="P:RestLittle.RestingMonitorConfiguration.RestTimePerBusyTime"/>.
+                User is considered rested once he's idle for at least
+                <see cref="P:RestLittle.RestingMonitorConfiguration.RestTimePerBusyTime"/>.
             </remarks>
         </member>
         <member name="P:RestLittle.RestingMonitor.MustRest">
@@ -138,18 +148,7 @@
                 Updates the current status.
             </summary>
             <param name="elapsed">
-                How much time elapsed since the last update.
-            </param>
-        </member>
-        <member name="M:RestLittle.RestingMonitor.IncrementStatus(RestLittle.UserStatus,System.TimeSpan)">
-            <summary>
-                Increments the timer accordingly to the provided status.
-            </summary>
-            <param name="status">
-                The current status of the user.
-            </param>
-            <param name="elapsed">
-                The amount of time the user has elapsed on this status.
+                How much time elapsed since the last call to <see cref="M:RestLittle.RestingMonitor.Update(System.TimeSpan)"/>.
             </param>
         </member>
         <member name="T:RestLittle.RestingMonitorConfiguration">
@@ -174,6 +173,16 @@
         </member>
         <member name="T:RestLittle.UserIdleMonitor">
             <inheritdoc/>
+        </member>
+        <member name="F:RestLittle.UserIdleMonitor._minTimeToIdle">
+            <summary>
+            After this interval of idleness, the user is considered idle.
+            </summary>
+        </member>
+        <member name="F:RestLittle.UserIdleMonitor._inputManager">
+            <summary>
+            Dependency. Used to obtain the last time the user interacted with the computer.
+            </summary>
         </member>
         <member name="M:RestLittle.UserIdleMonitor.#ctor(RestLittle.UserIdleMonitorConfiguration,RestLittle.IInputManager)">
             <summary>

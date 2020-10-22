@@ -1,9 +1,9 @@
+// Copyright (c) Bruno Brant. All rights reserved.
+
+using System;
+using System.Linq;
 using AutoFixture.Xunit2;
 using NSubstitute;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace RestLittle.Tests
@@ -13,12 +13,16 @@ namespace RestLittle.Tests
 		private readonly IUserIdleMonitor _userIdleMonitor = Substitute.For<IUserIdleMonitor>();
 
 		[Theory, AutoData]
-		public void Update_StatusUnchanged_TotalTimeEqualsElapsed(RestingMonitorConfiguration configuration, TimeSpan elapsed)
+		public void Update_StatusAlwaysBusy_TotalTimeEqualsElapsed(RestingMonitorConfiguration configuration, TimeSpan elapsed)
 		{
 			if (configuration is null)
 			{
 				throw new ArgumentNullException(nameof(configuration));
 			}
+
+			configuration.InitialStatus = UserStatus.Busy;
+
+			configuration.MaxBusyTime += elapsed;
 
 			_userIdleMonitor.GetStatus().Returns(configuration.InitialStatus);
 
@@ -85,6 +89,7 @@ namespace RestLittle.Tests
 			}
 
 			Assert.Equal(otherStatus, sut.LastStatus);
+
 			// Skip the first one when the time zeroes out.
 			Assert.Equal(elapseds.Skip(1).Aggregate(TimeSpan.Zero, (acc, cur) => acc + cur), sut.TimeSinceLastStatus);
 		}
@@ -108,7 +113,7 @@ namespace RestLittle.Tests
 		}
 
 		[Theory, AutoData]
-		public void Update_WhenInitialStatusIsIdleAndThenIdleAgain_TotalIdleTimeIsElapsed(RestingMonitorConfiguration configuration, TimeSpan elapsed)
+		public void Update_WhenInitialStatusIsIdleAndThenIdleAgain_TotalIdleTimeIsZero(RestingMonitorConfiguration configuration, TimeSpan elapsed)
 		{
 			if (configuration is null)
 			{
@@ -144,11 +149,13 @@ namespace RestLittle.Tests
 			sut.Update(busyTime);
 
 			// now rest for a while
-			foreach (var _ in Enumerable.Range(0, 10))
-			{
-				_userIdleMonitor.GetStatus().Returns(UserStatus.Idle);
-				sut.Update(TimeSpan.FromSeconds(1));
-			}
+			Enumerable
+				.Range(0, 10)
+				.ForEach(_ =>
+				{
+					_userIdleMonitor.GetStatus().Returns(UserStatus.Idle);
+					sut.Update(TimeSpan.FromSeconds(1));
+				});
 
 			Assert.Equal(UserStatus.Idle, sut.LastStatus);
 			Assert.Equal(TimeSpan.Zero, sut.TotalBusyTimeSinceRested);

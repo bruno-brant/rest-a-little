@@ -13,7 +13,7 @@ namespace RestLittle
 		///     Gets the time when the user last used the mouse or the keyboard.
 		/// </summary>
 		/// <returns>
-		///     A DateTime instance of the last time the user used the input devices.
+		///     A <see cref="DateTime"/> instance of the last time the user used the input devices.
 		/// </returns>
 		DateTime GetLastInputTime();
 	}

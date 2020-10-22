@@ -107,7 +107,7 @@ namespace RestLittle.UI.Presenters
 				_trayIconView.Icon = icon;
 			}
 
-			_trayIconView.Status = $"User has been busy for {busyElapsed} and idle for {idleElapsed}.";
+			_trayIconView.Status = $"You've been busy for {busyElapsed} and idle for {idleElapsed}".Truncate(63, true);
 
 			if (_restingMonitorModel.MustRest
 				&& _lastWarning.UntilNow() > _warningInterval)
