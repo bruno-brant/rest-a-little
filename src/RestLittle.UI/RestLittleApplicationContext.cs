@@ -2,8 +2,6 @@
 
 using System;
 using System.Windows.Forms;
-using RestLittle.UI.Models;
-using RestLittle.UI.Presenters;
 using RestLittle.UI.Views;
 
 namespace RestLittle.UI
@@ -14,19 +12,18 @@ namespace RestLittle.UI
 	public class RestLittleApplicationContext : ApplicationContext
 	{
 		private readonly TrayIconView _trayIconView;
-		private readonly TrayIconModel _trayIconModel;
-		private readonly TrayIconPresenter _trayIconPresenter;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RestLittleApplicationContext"/> class.
 		/// </summary>
 		public RestLittleApplicationContext()
 		{
-			_trayIconView = new TrayIconView();
-			_trayIconModel = new TrayIconModel();
-			_trayIconPresenter = new TrayIconPresenter(_trayIconView, _trayIconModel);
+			var restingMonitor = new RestingMonitor(
+				Settings.Default,
+				new UserIdleMonitor(Settings.Default, new InputManager()));
 
-			_trayIconPresenter.ExitClicked += TrayIconPresenter_ExitClicked;
+			_trayIconView = new TrayIconView(restingMonitor);
+			_trayIconView.ExitClicked += TrayIconPresenter_ExitClicked;
 		}
 
 		/// <inheritdoc/>
@@ -35,7 +32,6 @@ namespace RestLittle.UI
 			if (disposing)
 			{
 				_trayIconView.Dispose();
-				_trayIconModel.Dispose();
 			}
 
 			base.Dispose(disposing);

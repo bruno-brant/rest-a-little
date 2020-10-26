@@ -17,6 +17,7 @@ namespace RestLittle.UI.Views
 			{
 				components.Dispose();
 			}
+
 			base.Dispose(disposing);
 		}
 
