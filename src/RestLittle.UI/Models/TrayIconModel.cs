@@ -2,7 +2,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace RestLittle.UI.Models
 {
@@ -45,6 +45,11 @@ namespace RestLittle.UI.Models
 		private readonly Stopwatch _stopwatch = new Stopwatch();
 
 		/// <summary>
+		/// Used to log information for diagnostics.
+		/// </summary>
+		private readonly ILogger<TrayIconModel> _logger;
+
+		/// <summary>
 		/// Whether the object is disposed.
 		/// </summary>
 		private bool _disposedValue;
@@ -52,11 +57,16 @@ namespace RestLittle.UI.Models
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TrayIconModel"/> class.
 		/// </summary>
-		public TrayIconModel()
+		/// <param name="logger">Logs informational messages.</param>
+		public TrayIconModel(ILogger<TrayIconModel> logger)
 		{
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
 			_stopwatch.Start();
 			_updater = new RepeatingEvent(UpdateMonitor, _updateInterval);
 			_updater.Start();
+
+			logger.LogInformation($"Initializing loop with interval of {_updateInterval}");
 		}
 
 		/// <summary>
@@ -134,8 +144,24 @@ namespace RestLittle.UI.Models
 		{
 			_restingMonitor.Update(_stopwatch.Elapsed);
 			_stopwatch.Restart();
+			OnRestingMonitorUpdated();
+		}
 
-			RestingMonitorUpdated(this, new EventArgs());
+		/// <summary>
+		/// Raises the RestingMonitorUpdated event.
+		/// </summary>
+		private void OnRestingMonitorUpdated()
+		{
+			var @event = RestingMonitorUpdated;
+
+			if (@event != null)
+			{
+				RestingMonitorUpdated(this, new EventArgs());
+			}
+			else
+			{
+				_logger.LogWarning($"No subscribers for {nameof(RestingMonitorUpdated)}");
+			}
 		}
 	}
 }

@@ -2,9 +2,7 @@
 
 using System;
 using System.Windows.Forms;
-using RestLittle.UI.Models;
 using RestLittle.UI.Presenters;
-using RestLittle.UI.Views;
 
 namespace RestLittle.UI
 {
@@ -13,18 +11,21 @@ namespace RestLittle.UI
 	/// </summary>
 	public class RestLittleApplicationContext : ApplicationContext
 	{
-		private readonly TrayIconView _trayIconView;
-		private readonly TrayIconModel _trayIconModel;
 		private readonly TrayIconPresenter _trayIconPresenter;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="RestLittleApplicationContext"/> class.
 		/// </summary>
-		public RestLittleApplicationContext()
+		/// <param name="trayIconPresenter">
+		/// The initial presenter.
+		/// </param>
+		public RestLittleApplicationContext(TrayIconPresenter trayIconPresenter)
 		{
-			_trayIconView = new TrayIconView();
-			_trayIconModel = new TrayIconModel();
-			_trayIconPresenter = new TrayIconPresenter(_trayIconView, _trayIconModel);
+			//_trayIconView = new TrayIconView();
+			//_trayIconModel = new TrayIconModel();
+			//_trayIconPresenter = new TrayIconPresenter(_trayIconView, _trayIconModel);
+
+			_trayIconPresenter = trayIconPresenter ?? throw new ArgumentNullException(nameof(trayIconPresenter));
 
 			_trayIconPresenter.ExitClicked += TrayIconPresenter_ExitClicked;
 		}
@@ -34,8 +35,10 @@ namespace RestLittle.UI
 		{
 			if (disposing)
 			{
-				_trayIconView.Dispose();
-				_trayIconModel.Dispose();
+				//_trayIconView.Dispose();
+				//_trayIconModel.Dispose();
+
+				//_trayIconPresenter.Dispose();
 			}
 
 			base.Dispose(disposing);

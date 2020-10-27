@@ -1,9 +1,8 @@
 // Copyright (c) Bruno Brant. All rights reserved.
 
 using System;
-using System.Drawing;
-using System.Globalization;
 using System.Windows.Forms;
+using Microsoft.Extensions.Logging;
 using RestLittle.UI.Models;
 using RestLittle.UI.Views;
 
@@ -18,6 +17,7 @@ namespace RestLittle.UI.Presenters
 		/// The model that this presenter uses.
 		/// </summary>
 		private readonly TrayIconModel _restingMonitorModel;
+		private readonly ILogger<TrayIconPresenter> _logger;
 
 		/// <summary>
 		/// The view controlled by this presenter.
@@ -41,10 +41,12 @@ namespace RestLittle.UI.Presenters
 		/// View that controls the tray icon.
 		/// </param>
 		/// <param name="restingMonitorModel">The model controlled by this presenter.</param>
-		public TrayIconPresenter(ITrayIconView trayIconView, TrayIconModel restingMonitorModel)
+		/// <param name="logger">Used to register informational messages.</param>
+		public TrayIconPresenter(ITrayIconView trayIconView, TrayIconModel restingMonitorModel, ILogger<TrayIconPresenter> logger)
 		{
 			_trayIconView = trayIconView ?? throw new ArgumentNullException(nameof(trayIconView));
 			_restingMonitorModel = restingMonitorModel ?? throw new ArgumentNullException(nameof(restingMonitorModel));
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
 			_restingMonitorModel.RestingMonitorUpdated += RestingMonitorModel_RestingMonitorUpdated;
 
@@ -109,25 +111,15 @@ namespace RestLittle.UI.Presenters
 
 			_trayIconView.Status = $"You've been busy for {busyElapsed} and idle for {idleElapsed}".Truncate(63, true);
 
-			if (_restingMonitorModel.MustRest
-				&& _lastWarning.UntilNow() > _warningInterval)
+			if (_restingMonitorModel.MustRest && _lastWarning.UntilNow() > _warningInterval)
 			{
+				_logger.LogInformation($"Please go rest! You haven't rested for {busyElapsed}.");
+
 				var tipText = $"Please go rest! You haven't rested for {busyElapsed}.";
 				_trayIconView.ShowBalloonTip(5000, "Must rest!", tipText, ToolTipIcon.Warning);
 
 				_lastWarning = DateTime.Now;
 			}
-		}
-
-		/// <summary>
-		///     Checks whether the user is idle.
-		/// </summary>
-		/// <returns>
-		///     True if the user is idle, false otherwise.
-		/// </returns>
-		private bool IsIdle()
-		{
-			return _restingMonitorModel.LastStatus == UserStatus.Idle;
 		}
 	}
 }

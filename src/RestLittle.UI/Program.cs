@@ -1,10 +1,13 @@
 // Copyright (c) Bruno Brant. All rights reserved.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using RestLittle.UI.DependencyInjection;
+using RestLittle.UI.Models;
+using RestLittle.UI.Presenters;
+using RestLittle.UI.Views;
 
 namespace RestLittle.UI
 {
@@ -19,13 +22,27 @@ namespace RestLittle.UI
 		[STAThread]
 		private static void Main()
 		{
+			var services = new ServiceCollection();
+
+			ConfigureServices(services);
+
+			using var serviceProvider = services.BuildServiceProvider();
+
 			Application.SetHighDpiMode(HighDpiMode.SystemAware);
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
-			using var context = new RestLittleApplicationContext();
+			var context = serviceProvider.GetService<RestLittleApplicationContext>();
 
 			Application.Run(context);
+		}
+
+		private static void ConfigureServices(ServiceCollection services)
+		{
+			services
+				.AddLogging(configure => configure.AddFile("restalittle.log"))
+				.AddTrayIcon()
+				.AddScoped<RestLittleApplicationContext>();
 		}
 	}
 }
