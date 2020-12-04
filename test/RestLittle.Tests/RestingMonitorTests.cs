@@ -137,7 +137,7 @@ namespace RestLittle.Tests
 			{
 				InitialStatus = UserStatus.Busy,
 				MaxBusyTime = TimeSpan.MaxValue,
-				RestTimePerBusyTime = TimeSpan.FromSeconds(3),
+				RestingTime = TimeSpan.FromSeconds(3),
 			};
 
 			var busyTime = TimeSpan.FromSeconds(30);
@@ -169,7 +169,7 @@ namespace RestLittle.Tests
 			{
 				InitialStatus = UserStatus.Busy,
 				MaxBusyTime = TimeSpan.MaxValue,
-				RestTimePerBusyTime = TimeSpan.FromSeconds(3),
+				RestingTime = TimeSpan.FromSeconds(3),
 			};
 
 			var busyTime = TimeSpan.FromSeconds(30);
@@ -201,6 +201,7 @@ namespace RestLittle.Tests
 			}
 
 			_userIdleMonitor.GetStatus().Returns(UserStatus.Busy);
+
 			configuration.InitialStatus = UserStatus.Busy;
 
 			var sut = new RestingMonitor(configuration, _userIdleMonitor);
@@ -228,6 +229,15 @@ namespace RestLittle.Tests
 			sut.Update(configuration.MaxBusyTime + new TimeSpan(-1));
 
 			Assert.False(sut.MustRest);
+		}
+
+		public class RestingMonitorConfiguration : IRestingMonitorConfiguration
+		{
+			public TimeSpan MaxBusyTime { get; set; }
+
+			public TimeSpan RestingTime { get; set; }
+
+			public UserStatus InitialStatus { get; set; }
 		}
 	}
 }

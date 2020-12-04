@@ -1,6 +1,8 @@
+// Copyright (c) Bruno Brant. All rights reserved.
+
+using System;
 using AutoFixture.Xunit2;
 using NSubstitute;
-using System;
 using Xunit;
 
 namespace RestLittle.Tests
@@ -8,7 +10,7 @@ namespace RestLittle.Tests
 	public class UserIdleMonitorTests
 	{
 		[Theory, AutoData]
-		public void Update_WhenLastTimeIsLessThanTimeToIdle_StatusIsBusy(UserIdleMonitorConfiguration configuration)
+		public void Update_WhenLastTimeIsLessThanTimeToIdle_StatusIsBusy(IUserIdleMonitorConfiguration configuration)
 		{
 			if (configuration is null)
 			{
@@ -17,7 +19,7 @@ namespace RestLittle.Tests
 
 			var inputManager = Substitute.For<IInputManager>();
 			inputManager.GetLastInputTime()
-				.Returns(DateTime.Now - (configuration.MinTimeToIdle - TimeSpan.FromMinutes(1)));
+				.Returns(DateTime.Now - (configuration.TimeToIdle - TimeSpan.FromMinutes(1)));
 
 			var sut = new UserIdleMonitor(configuration, inputManager);
 
@@ -27,7 +29,7 @@ namespace RestLittle.Tests
 		}
 
 		[Theory, AutoData]
-		public void Update_WhenLastTimeIsLargerThanMaxBusyTime_StatusIsIdle(UserIdleMonitorConfiguration configuration)
+		public void Update_WhenLastTimeIsLargerThanMaxBusyTime_StatusIsIdle(IUserIdleMonitorConfiguration configuration)
 		{
 			if (configuration is null)
 			{
@@ -36,7 +38,7 @@ namespace RestLittle.Tests
 
 			var inputManager = Substitute.For<IInputManager>();
 			inputManager.GetLastInputTime()
-				.Returns(DateTime.Now - (configuration.MinTimeToIdle + TimeSpan.FromMinutes(1)));
+				.Returns(DateTime.Now - (configuration.TimeToIdle + TimeSpan.FromMinutes(1)));
 
 			var sut = new UserIdleMonitor(configuration, inputManager);
 
@@ -46,4 +48,3 @@ namespace RestLittle.Tests
 		}
 	}
 }
-

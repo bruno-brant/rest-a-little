@@ -1,3 +1,5 @@
+// Copyright (c) Bruno Brant. All rights reserved.
+
 using System;
 using Xunit;
 

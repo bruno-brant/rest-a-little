@@ -2,6 +2,7 @@
 
 using System;
 using AutoFixture.Xunit2;
+using RestLittle.UI.Plumbing;
 using Xunit;
 
 namespace RestLittle.UI.Tests

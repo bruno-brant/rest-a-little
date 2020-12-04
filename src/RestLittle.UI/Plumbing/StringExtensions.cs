@@ -2,7 +2,7 @@
 
 using System;
 
-namespace RestLittle.UI
+namespace RestLittle.UI.Plumbing
 {
 	/// <summary>
 	/// Extensions for the <see cref="string"/> object.

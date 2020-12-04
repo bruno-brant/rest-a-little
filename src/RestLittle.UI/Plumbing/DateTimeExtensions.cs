@@ -1,11 +1,8 @@
 // Copyright (c) Bruno Brant. All rights reserved.
 
 using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 
-namespace RestLittle.UI
+namespace RestLittle.UI.Plumbing
 {
 	/// <summary>
 	/// Extensions for type <see cref="DateTime"/>.

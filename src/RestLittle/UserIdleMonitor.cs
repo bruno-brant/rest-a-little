@@ -8,9 +8,9 @@ namespace RestLittle
 	public class UserIdleMonitor : IUserIdleMonitor
 	{
 		/// <summary>
-		/// After this interval of idleness, the user is considered idle.
+		/// Configurations for this service.
 		/// </summary>
-		private readonly TimeSpan _minTimeToIdle;
+		private readonly IUserIdleMonitorConfiguration _configuration;
 
 		/// <summary>
 		/// Dependency. Used to obtain the last time the user interacted with the computer.
@@ -26,9 +26,9 @@ namespace RestLittle
 		/// <param name="inputManager">
 		///     Allows to check the last time the user has used an input device.
 		/// </param>
-		public UserIdleMonitor(UserIdleMonitorConfiguration configuration, IInputManager inputManager)
+		public UserIdleMonitor(IUserIdleMonitorConfiguration configuration, IInputManager inputManager)
 		{
-			_minTimeToIdle = configuration?.MinTimeToIdle ?? throw new ArgumentNullException(nameof(configuration));
+			_configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 			_inputManager = inputManager ?? throw new ArgumentNullException(nameof(inputManager));
 		}
 
@@ -39,7 +39,7 @@ namespace RestLittle
 
 			var timeSinceLastInput = DateTime.Now - lastTime;
 
-			return timeSinceLastInput > _minTimeToIdle
+			return timeSinceLastInput > _configuration.TimeToIdle
 				? UserStatus.Idle
 				: UserStatus.Busy;
 		}

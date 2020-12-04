@@ -7,11 +7,11 @@ namespace RestLittle
 	/// <summary>
 	/// Configuration for service <see cref="UserIdleMonitor"/>.
 	/// </summary>
-	public class UserIdleMonitorConfiguration
+	public interface IUserIdleMonitorConfiguration
 	{
 		/// <summary>
-		/// Gets or sets the minimum amount of time without using the computer that is considered to be idle.
+		/// Gets the minimum amount of time without using the computer that is considered to be idle.
 		/// </summary>
-		public TimeSpan MinTimeToIdle { get; set; }
+		TimeSpan TimeToIdle { get; }
 	}
 }

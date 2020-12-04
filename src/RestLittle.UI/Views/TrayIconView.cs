@@ -3,6 +3,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using RestLittle.UI.Models;
 using RestLittle.UI.Presenters;
 
 namespace RestLittle.UI.Views
@@ -16,9 +17,19 @@ namespace RestLittle.UI.Views
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TrayIconView"/> class.
 		/// </summary>
-		public TrayIconView()
+		public TrayIconView(RestingMonitor restingMonitor)
 		{
 			InitializeComponent();
+
+			var trayIconModel = new TrayIconModel(restingMonitor);
+
+			components.Add(trayIconModel);
+
+#pragma warning disable CA2000 // Dispose objects before losing scope
+			// TODO: inject Settings
+			var trayIconPresenter = new TrayIconPresenter(Settings.Default, this, trayIconModel);
+			components.Add(trayIconPresenter);
+#pragma warning restore CA2000 // Dispose objects before losing scope
 		}
 
 		/// <inheritdoc/>

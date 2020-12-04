@@ -10,7 +10,7 @@ namespace RestLittle
 	/// </summary>
 	public class RestingMonitor
 	{
-		private readonly RestingMonitorConfiguration _configuration;
+		private readonly IRestingMonitorConfiguration _configuration;
 		private readonly IUserIdleMonitor _userIdleMonitor;
 
 		/// <summary>
@@ -36,7 +36,7 @@ namespace RestLittle
 		/// <param name="userIdleMonitor">
 		///     Used to check whether the user is currently idle or is busy.
 		/// </param>
-		public RestingMonitor(RestingMonitorConfiguration configuration, IUserIdleMonitor userIdleMonitor)
+		public RestingMonitor(IRestingMonitorConfiguration configuration, IUserIdleMonitor userIdleMonitor)
 		{
 			_configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 			_userIdleMonitor = userIdleMonitor ?? throw new ArgumentNullException(nameof(userIdleMonitor));
@@ -59,7 +59,7 @@ namespace RestLittle
 		/// </summary>
 		/// <remarks>
 		/// User is considered rested once he's idle for at least
-		/// <see cref="RestingMonitorConfiguration.RestTimePerBusyTime"/>.
+		/// <see cref="IRestingMonitorConfiguration.RestingTime"/>.
 		/// </remarks>
 		public TimeSpan TotalIdleTimeSinceRested => _elapsedTimeSinceRested[UserStatus.Idle];
 
@@ -68,7 +68,7 @@ namespace RestLittle
 		/// </summary>
 		/// <remarks>
 		///     User is considered rested once he's idle for at least
-		///     <see cref="RestingMonitorConfiguration.RestTimePerBusyTime"/>.
+		///     <see cref="IRestingMonitorConfiguration.RestingTime"/>.
 		/// </remarks>
 		public TimeSpan TotalBusyTimeSinceRested => _elapsedTimeSinceRested[UserStatus.Busy];
 
@@ -95,7 +95,7 @@ namespace RestLittle
 			}
 
 			if (_elapsedTimeSinceRested[UserStatus.Busy] == TimeSpan.Zero
-				|| TotalIdleTimeSinceRested >= _configuration.RestTimePerBusyTime)
+				|| TotalIdleTimeSinceRested >= _configuration.RestingTime)
 			{
 				_elapsedTimeSinceRested[UserStatus.Busy] = TimeSpan.Zero;
 				_elapsedTimeSinceRested[UserStatus.Idle] = TimeSpan.Zero;

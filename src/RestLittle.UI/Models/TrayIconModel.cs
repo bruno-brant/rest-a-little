@@ -1,33 +1,21 @@
 // Copyright (c) Bruno Brant. All rights reserved.
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading;
+using RestLittle.UI.Plumbing;
 
 namespace RestLittle.UI.Models
 {
 	/// <summary>
 	/// A model that encapsulates a <see cref="RestingMonitor"/>.
 	/// </summary>
-	public class TrayIconModel : IDisposable
+	public class TrayIconModel : IDisposable, IComponent
 	{
 		/// <summary>
 		/// Instance of _restingMonitor used by this class.
 		/// </summary>
-		private readonly RestingMonitor _restingMonitor =
-				new RestingMonitor(
-					new RestingMonitorConfiguration
-					{
-						InitialStatus = UserStatus.Idle,
-						MaxBusyTime = TimeSpan.FromMinutes(30),
-						RestTimePerBusyTime = TimeSpan.FromMinutes(5),
-					},
-					new UserIdleMonitor(
-						new UserIdleMonitorConfiguration
-						{
-							MinTimeToIdle = TimeSpan.FromSeconds(45),
-						},
-						new InputManager()));
+		private readonly RestingMonitor _restingMonitor;
 
 		/// <summary>
 		/// How long to wait between updates.
@@ -52,11 +40,14 @@ namespace RestLittle.UI.Models
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TrayIconModel"/> class.
 		/// </summary>
-		public TrayIconModel()
+		/// <param name="restingMonitor">Service that monitors user resting time.</param>
+		public TrayIconModel(RestingMonitor restingMonitor)
 		{
 			_stopwatch.Start();
 			_updater = new RepeatingEvent(UpdateMonitor, _updateInterval);
 			_updater.Start();
+
+			_restingMonitor = restingMonitor ?? throw new ArgumentNullException(nameof(restingMonitor));
 		}
 
 		/// <summary>
@@ -64,21 +55,24 @@ namespace RestLittle.UI.Models
 		/// </summary>
 		public event EventHandler RestingMonitorUpdated;
 
+		/// <inheritdoc/>
+		public event EventHandler Disposed;
+
 		/// <summary>
-		/// Gets the accumulated WORKING time since the user was last considered rested.
+		///     Gets the accumulated WORKING time since the user was last considered rested.
 		/// </summary>
 		/// <remarks>
-		/// User is considered rested once he's idle for at least
-		/// <see cref="RestingMonitorConfiguration.RestTimePerBusyTime"/>.
+		///     User is considered rested once he's idle for at least
+		///     <see cref="IRestingMonitorConfiguration.RestingTime"/>.
 		/// </remarks>
 		public TimeSpan BusyTimeSinceRested => _restingMonitor.TotalBusyTimeSinceRested;
 
 		/// <summary>
-		/// Gets the accumulated RESTING time since the user was last considered rested.
+		///     Gets the accumulated RESTING time since the user was last considered rested.
 		/// </summary>
 		/// <remarks>
-		/// User is considered rested once he's idle for at least
-		/// <see cref="RestingMonitorConfiguration.RestTimePerBusyTime"/>.
+		///     User is considered rested once he's idle for at least
+		///     <see cref="IRestingMonitorConfiguration.RestingTime"/>.
 		/// </remarks>
 		public TimeSpan IdleTimeSinceRested => _restingMonitor.TotalIdleTimeSinceRested;
 
@@ -91,6 +85,9 @@ namespace RestLittle.UI.Models
 		/// Gets a value indicating whether the user must rest.
 		/// </summary>
 		public bool MustRest => _restingMonitor.MustRest;
+
+		/// <inheritdoc/>
+		public ISite Site { get; set; }
 
 		/// <inheritdoc/>
 		public void Dispose()
@@ -135,7 +132,12 @@ namespace RestLittle.UI.Models
 			_restingMonitor.Update(_stopwatch.Elapsed);
 			_stopwatch.Restart();
 
-			RestingMonitorUpdated(this, new EventArgs());
+			var @event = RestingMonitorUpdated;
+
+			if (@event != null)
+			{
+				RestingMonitorUpdated(this, new EventArgs());
+			}
 		}
 	}
 }
