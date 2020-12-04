@@ -13,6 +13,11 @@
 		<RepositoryUrl>https://github.com/bruno-brant/rest-a-little</RepositoryUrl>
 		<RepositoryType>Git</RepositoryType>
 		<NeutralLanguage>en-US</NeutralLanguage>
+		<AssemblyName>rest-a-little</AssemblyName>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <WarningLevel>0</WarningLevel>
 	</PropertyGroup>
 	
 	<ItemGroup>
