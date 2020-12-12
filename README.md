@@ -17,7 +17,7 @@ Installation
 ------------
 
 ### Manually
-Just copy the .exe somewhere in your machine. If you want to have it start together with Windows, go WIN+R, type `shell:startup` and add a shortcut to the exe.
+Just copy the .exe somewhere in your machine. If you want it start together with Windows, go WIN+R, type `shell:startup` and add a shortcut to the exe.
 
 ### Installator
 
