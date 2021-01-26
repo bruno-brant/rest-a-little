@@ -83,7 +83,7 @@ namespace RestLittle.UI.Tests.PresenterTests
 		}
 
 		[Theory, AutoData]
-		public void FormAccepted_DataIsInvalid_UpdatesModelAndClosesForm(Settings model)
+		public void FormAccepted_DataIsInvalid_SetErrorsOnView(Settings model)
 		{
 			if (model is null)
 			{
@@ -92,7 +92,7 @@ namespace RestLittle.UI.Tests.PresenterTests
 
 			var view = Substitute.For<IConfigurationFormView>();
 
-			view.TimeToIdle.Returns((-1).ToString(CultureInfo.InvariantCulture));
+			view.TimeToIdle.Returns((-1).ToString(CultureInfo.InvariantCulture)); // invalid data
 			view.MaxBusyTime.Returns(_fixture.Create<int>().ToString(CultureInfo.InvariantCulture));
 			view.RestingTime.Returns(_fixture.Create<int>().ToString(CultureInfo.InvariantCulture));
 			view.WarningInterval.Returns(_fixture.Create<int>().ToString(CultureInfo.InvariantCulture));
@@ -107,6 +107,8 @@ namespace RestLittle.UI.Tests.PresenterTests
 				Assert.Equal(view.WarningInterval, model.WarningInterval.TotalSeconds.ToString(CultureInfo.InvariantCulture));
 
 				view.DidNotReceive().Close();
+
+				view.Received().SetError(Arg.Any<string>(), Arg.Any<string>());
 			}
 		}
 	}

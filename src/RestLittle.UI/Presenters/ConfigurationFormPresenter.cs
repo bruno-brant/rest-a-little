@@ -9,7 +9,7 @@ using RestLittle.UI.Plumbing;
 namespace RestLittle.UI.Presenters
 {
 	/// <summary>
-	/// A Presenter from MVP for the ConfigurationFormView.
+	/// A presenter from MVP for the ConfigurationFormView.
 	/// </summary>
 	public class ConfigurationFormPresenter : Presenter<IConfigurationFormView, Settings>, IComponent
 	{

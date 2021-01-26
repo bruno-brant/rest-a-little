@@ -23,6 +23,7 @@ namespace RestLittle.UI
 		/// </summary>
 		[UserScopedSetting]
 		[DefaultSettingValue("00:00:15")]
+		[Plumbing.TimeSpanValidator(MinValue = "00:00:01")]
 		public TimeSpan TimeToIdle
 		{
 			get { return (TimeSpan)this[nameof(TimeToIdle)]; }
