@@ -11,8 +11,8 @@ namespace RestLittle.UI.Plumbing
 	/// </summary>
 	public class TimeSpanValidatorAttribute : ValidationAttribute
 	{
-		private TimeSpan _minValue;
-		private TimeSpan _maxValue;
+		private TimeSpan? _minValue;
+		private TimeSpan? _maxValue;
 
 		/// <summary>
 		/// Gets or sets minimum inclusive allowed value for this TimeSpan.
@@ -37,12 +37,12 @@ namespace RestLittle.UI.Plumbing
 				return new ValidationResult("Invalid TimeSpan.");
 			}
 
-			if (ts < _minValue)
+			if (_minValue is not null && ts < _minValue)
 			{
 				return new ValidationResult($"TimeSpan value '{value}' must be greater or equal to '{MinValue}'");
 			}
 
-			if (ts > _maxValue)
+			if (_maxValue is not null && ts > _maxValue)
 			{
 				return new ValidationResult($"TimeSpan value '{value}' must be less or equal to '{MaxValue}'");
 			}

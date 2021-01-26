@@ -69,6 +69,13 @@ namespace RestLittle.UI.Tests.PresenterTests
 			view.TimeToIdle.Returns(time.ToString(CultureInfo.InvariantCulture));
 			view.WarningInterval.Returns(time.ToString(CultureInfo.InvariantCulture));
 
+			// capture the strings (for debugging purposes)
+			string name, errorMsg;
+			view.When(_ =>
+				_.SetError(
+					Arg.Do<string>(_ => name = _),
+					Arg.Do<string>(_ => errorMsg = _)));
+
 			using (new ConfigurationFormPresenter(view, model))
 			{
 				view.Accepted += Raise.Event();
@@ -78,6 +85,7 @@ namespace RestLittle.UI.Tests.PresenterTests
 				Assert.Equal(view.TimeToIdle, model.TimeToIdle.TotalSeconds.ToString(CultureInfo.InvariantCulture));
 				Assert.Equal(view.WarningInterval, model.WarningInterval.TotalSeconds.ToString(CultureInfo.InvariantCulture));
 
+				view.DidNotReceive().SetError(Arg.Any<string>(), Arg.Any<string>());
 				view.Received().Close();
 			}
 		}

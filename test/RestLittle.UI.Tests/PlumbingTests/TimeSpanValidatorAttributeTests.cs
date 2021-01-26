@@ -27,6 +27,32 @@ namespace RestLittle.UI.Tests.PlumbingTests
 		}
 
 		[Fact]
+		public void IsValid_WhenOnlyMinValueSet_ThenAllowsAnyValueAboveIt()
+		{
+			var sut = new TimeSpanValidatorAttribute
+			{
+				MinValue = "00:00:01",
+			};
+
+			Assert.True(sut.IsValid(TimeSpan.FromSeconds(2)));
+			Assert.True(sut.IsValid(TimeSpan.MaxValue));
+			Assert.False(sut.IsValid(TimeSpan.FromSeconds(0)));
+		}
+
+		[Fact]
+		public void IsValid_WhenOnlyMaxValueSet_ThenAllowsAnyValueBelowIt()
+		{
+			var sut = new TimeSpanValidatorAttribute
+			{
+				MinValue = "00:00:01",
+			};
+
+			Assert.True(sut.IsValid(TimeSpan.FromSeconds(2)));
+			Assert.True(sut.IsValid(TimeSpan.MaxValue));
+			Assert.False(sut.IsValid(TimeSpan.FromSeconds(0)));
+		}
+
+		[Fact]
 		public void IsValid_WhenTimeSpanInRange_ReturnsTrue()
 		{
 			var sut = new TimeSpanValidatorAttribute
