@@ -8,7 +8,7 @@ namespace RestLittle
 	/// <summary>
 	/// Checks whether the user is properly rested.
 	/// </summary>
-	public class RestingMonitor
+	public class RestingMonitor : IRestingMonitor
 	{
 		private readonly IRestingMonitorConfiguration _configuration;
 		private readonly IUserIdleMonitor _userIdleMonitor;
@@ -21,10 +21,10 @@ namespace RestLittle
 		///     by being able to call _elapsed[Status] instead of having to switch
 		///     all the time.
 		/// </remarks>
-		private readonly Dictionary<UserStatus, TimeSpan> _elapsedTimeSinceRested = new Dictionary<UserStatus, TimeSpan>
+		private readonly Dictionary<InteractionStatus, TimeSpan> _elapsedTimeSinceRested = new Dictionary<InteractionStatus, TimeSpan>
 		{
-			[UserStatus.Busy] = TimeSpan.Zero,
-			[UserStatus.Idle] = TimeSpan.Zero,
+			[InteractionStatus.Busy] = TimeSpan.Zero,
+			[InteractionStatus.Idle] = TimeSpan.Zero,
 		};
 
 		/// <summary>
@@ -47,7 +47,7 @@ namespace RestLittle
 		/// <summary>
 		/// Gets the last status of the user.
 		/// </summary>
-		public UserStatus LastStatus { get; private set; }
+		public InteractionStatus LastStatus { get; private set; }
 
 		/// <summary>
 		/// Gets time passed since the last status is the current.
@@ -61,7 +61,7 @@ namespace RestLittle
 		/// User is considered rested once he's idle for at least
 		/// <see cref="IRestingMonitorConfiguration.RestingTime"/>.
 		/// </remarks>
-		public TimeSpan TotalIdleTimeSinceRested => _elapsedTimeSinceRested[UserStatus.Idle];
+		public TimeSpan TotalIdleTimeSinceRested => _elapsedTimeSinceRested[InteractionStatus.Idle];
 
 		/// <summary>
 		///     Gets the accumulated WORKING time since the user was last considered rested.
@@ -70,19 +70,12 @@ namespace RestLittle
 		///     User is considered rested once he's idle for at least
 		///     <see cref="IRestingMonitorConfiguration.RestingTime"/>.
 		/// </remarks>
-		public TimeSpan TotalBusyTimeSinceRested => _elapsedTimeSinceRested[UserStatus.Busy];
+		public TimeSpan TotalBusyTimeSinceRested => _elapsedTimeSinceRested[InteractionStatus.Busy];
 
-		/// <summary>
-		/// Gets a value indicating whether the user must rest.
-		/// </summary>
+		/// <inheritdoc/>
 		public bool MustRest => TotalBusyTimeSinceRested > _configuration.MaxBusyTime;
 
-		/// <summary>
-		///     Updates the current status.
-		/// </summary>
-		/// <param name="elapsed">
-		///     How much time elapsed since the last call to <see cref="Update(TimeSpan)"/>.
-		/// </param>
+		/// <inheritdoc/>
 		public void Update(TimeSpan elapsed)
 		{
 			var currentStatus = _userIdleMonitor.GetStatus();
@@ -94,11 +87,12 @@ namespace RestLittle
 				_elapsedTimeSinceRested[currentStatus] += elapsed;
 			}
 
-			if (_elapsedTimeSinceRested[UserStatus.Busy] == TimeSpan.Zero
+			// Reset monitors if the user isn't working
+			if (_elapsedTimeSinceRested[InteractionStatus.Busy] == TimeSpan.Zero
 				|| TotalIdleTimeSinceRested >= _configuration.RestingTime)
 			{
-				_elapsedTimeSinceRested[UserStatus.Busy] = TimeSpan.Zero;
-				_elapsedTimeSinceRested[UserStatus.Idle] = TimeSpan.Zero;
+				_elapsedTimeSinceRested[InteractionStatus.Busy] = TimeSpan.Zero;
+				_elapsedTimeSinceRested[InteractionStatus.Idle] = TimeSpan.Zero;
 			}
 
 			LastStatus = currentStatus;

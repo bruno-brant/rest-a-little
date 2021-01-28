@@ -22,7 +22,7 @@ namespace RestLittle.UI.Views
 		/// <summary>
 		/// An icon for a working user.
 		/// </summary>
-		public static readonly UserStatusIcon Active = new UserStatusIcon("busy");
+		public static readonly UserStatusIcon Working = new UserStatusIcon("busy");
 
 		/// <summary>
 		/// An icon for a resting user.

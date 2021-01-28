@@ -5,7 +5,7 @@ namespace RestLittle
 	/// <summary>
 	/// Informs if the user is using the computer or not.
 	/// </summary>
-	public enum UserStatus
+	public enum InteractionStatus
 	{
 		/// <summary>
 		/// The user is idle.

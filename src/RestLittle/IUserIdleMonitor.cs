@@ -11,9 +11,9 @@ namespace RestLittle
 		///     Gets the current usage status of the computer.
 		/// </summary>
 		/// <returns>
-		///    <see cref="UserStatus.Busy"/> if the user is using the computer,
-		///    <see cref="UserStatus.Idle"/> otherwise.
+		///    <see cref="InteractionStatus.Busy"/> if the user is using the computer,
+		///    <see cref="InteractionStatus.Idle"/> otherwise.
 		/// </returns>
-		UserStatus GetStatus();
+		InteractionStatus GetStatus();
 	}
 }

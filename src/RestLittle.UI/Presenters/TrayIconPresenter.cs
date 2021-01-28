@@ -119,8 +119,9 @@ namespace RestLittle.UI.Presenters
 			// TODO: this should be moved to UserStatusIcon
 			return status switch
 			{
-				UserStatus.Idle => UserStatusIcon.Resting,
-				UserStatus.Busy => UserStatusIcon.Active,
+				UserStatus.Resting => UserStatusIcon.Resting,
+				UserStatus.Working => UserStatusIcon.Working,
+				UserStatus.Tired => UserStatusIcon.Tired,
 				_ => throw new ArgumentOutOfRangeException(nameof(status), status, $"No corresponding icon."),
 			};
 		}
@@ -148,6 +149,7 @@ namespace RestLittle.UI.Presenters
 			var idleElapsed = _restingMonitorModel.IdleTimeSinceRested.ToFriendlyString();
 			var icon = GetIcon(_restingMonitorModel.LastStatus);
 
+			// avoid repainting the icon
 			if (_trayIconView.Icon != icon.ToIcon())
 			{
 				_trayIconView.Icon = icon;

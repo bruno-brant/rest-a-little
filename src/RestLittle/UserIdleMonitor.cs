@@ -33,15 +33,15 @@ namespace RestLittle
 		}
 
 		/// <inheritdoc/>
-		public UserStatus GetStatus()
+		public InteractionStatus GetStatus()
 		{
 			var lastTime = _inputManager.GetLastInputTime();
 
 			var timeSinceLastInput = DateTime.Now - lastTime;
 
 			return timeSinceLastInput > _configuration.TimeToIdle
-				? UserStatus.Idle
-				: UserStatus.Busy;
+				? InteractionStatus.Idle
+				: InteractionStatus.Busy;
 		}
 	}
 }

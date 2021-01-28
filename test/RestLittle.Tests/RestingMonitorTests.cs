@@ -12,19 +12,19 @@ namespace RestLittle.Tests
 	{
 		private readonly IUserIdleMonitor _userIdleMonitor = Substitute.For<IUserIdleMonitor>();
 
-		[Theory, AutoData]
-		public void Update_StatusAlwaysBusy_TotalTimeEqualsElapsed(RestingMonitorConfiguration configuration, TimeSpan elapsed)
+		[Theory, AutoSubstituteData]
+		public void Update_WhenStatusAlwaysBusy_TotalTimeEqualsElapsed(IRestingMonitorConfiguration configuration, TimeSpan elapsed)
 		{
 			if (configuration is null)
 			{
 				throw new ArgumentNullException(nameof(configuration));
 			}
 
-			configuration.InitialStatus = UserStatus.Busy;
+			configuration.InitialStatus.Returns(InteractionStatus.Busy);
+			configuration.MaxBusyTime.Returns(elapsed);
+			configuration.RestingTime.Returns(TimeSpan.MaxValue);
 
-			configuration.MaxBusyTime += elapsed;
-
-			_userIdleMonitor.GetStatus().Returns(configuration.InitialStatus);
+			_userIdleMonitor.GetStatus().Returns(InteractionStatus.Busy);
 
 			var sut = new RestingMonitor(configuration, _userIdleMonitor);
 
@@ -34,8 +34,8 @@ namespace RestLittle.Tests
 			Assert.Equal(elapsed, sut.TimeSinceLastStatus);
 		}
 
-		[Theory, AutoData]
-		public void Update_StatusChanged_TotalTimeEqualsZero(RestingMonitorConfiguration configuration, TimeSpan elapsed)
+		[Theory, AutoSubstituteData]
+		public void Update_StatusChanged_TotalTimeEqualsZero(IRestingMonitorConfiguration configuration, TimeSpan elapsed)
 		{
 			if (configuration is null)
 			{
@@ -44,8 +44,8 @@ namespace RestLittle.Tests
 
 			var otherStatus = configuration.InitialStatus switch
 			{
-				UserStatus.Busy => UserStatus.Idle,
-				UserStatus.Idle => UserStatus.Busy,
+				InteractionStatus.Busy => InteractionStatus.Idle,
+				InteractionStatus.Idle => InteractionStatus.Busy,
 				_ => throw new NotImplementedException()
 			};
 
@@ -59,8 +59,8 @@ namespace RestLittle.Tests
 			Assert.Equal(TimeSpan.Zero, sut.TimeSinceLastStatus);
 		}
 
-		[Theory, AutoData]
-		public void Update_StatusChanged_TotalTimeEqualsSum(RestingMonitorConfiguration configuration, TimeSpan[] elapseds)
+		[Theory, AutoSubstituteData]
+		public void Update_WhenStatusChanged_TotalTimeEqualsSum(IRestingMonitorConfiguration configuration, TimeSpan[] elapseds)
 		{
 			if (configuration is null)
 			{
@@ -74,10 +74,12 @@ namespace RestLittle.Tests
 
 			var otherStatus = configuration.InitialStatus switch
 			{
-				UserStatus.Busy => UserStatus.Idle,
-				UserStatus.Idle => UserStatus.Busy,
+				InteractionStatus.Busy => InteractionStatus.Idle,
+				InteractionStatus.Idle => InteractionStatus.Busy,
 				_ => throw new NotImplementedException()
 			};
+
+			configuration.RestingTime.Returns(TimeSpan.MaxValue);
 
 			_userIdleMonitor.GetStatus().Returns(otherStatus);
 
@@ -94,16 +96,17 @@ namespace RestLittle.Tests
 			Assert.Equal(elapseds.Skip(1).Aggregate(TimeSpan.Zero, (acc, cur) => acc + cur), sut.TimeSinceLastStatus);
 		}
 
-		[Theory, AutoData]
-		public void Update_WhenInitialStatusIsBusyAndThenBusyAgain_TotalBusyTimeIsElapsed(RestingMonitorConfiguration configuration, TimeSpan elapsed)
+		[Theory, AutoSubstituteData]
+		public void Update_WhenInitialStatusIsBusyAndThenBusyAgain_TotalBusyTimeIsElapsed(IRestingMonitorConfiguration configuration, TimeSpan elapsed)
 		{
 			if (configuration is null)
 			{
 				throw new ArgumentNullException(nameof(configuration));
 			}
 
-			configuration.InitialStatus = UserStatus.Busy;
-			_userIdleMonitor.GetStatus().Returns(UserStatus.Busy);
+			configuration.RestingTime.Returns(TimeSpan.MaxValue);
+			configuration.InitialStatus.Returns(InteractionStatus.Busy);
+			_userIdleMonitor.GetStatus().Returns(InteractionStatus.Busy);
 
 			var sut = new RestingMonitor(configuration, _userIdleMonitor);
 
@@ -112,16 +115,16 @@ namespace RestLittle.Tests
 			Assert.Equal(elapsed, sut.TotalBusyTimeSinceRested);
 		}
 
-		[Theory, AutoData]
-		public void Update_WhenInitialStatusIsIdleAndThenIdleAgain_TotalIdleTimeIsZero(RestingMonitorConfiguration configuration, TimeSpan elapsed)
+		[Theory, AutoSubstituteData]
+		public void Update_WhenInitialStatusIsIdleAndThenIdleAgain_TotalIdleTimeIsZero(IRestingMonitorConfiguration configuration, TimeSpan elapsed)
 		{
 			if (configuration is null)
 			{
 				throw new ArgumentNullException(nameof(configuration));
 			}
 
-			configuration.InitialStatus = UserStatus.Idle;
-			_userIdleMonitor.GetStatus().Returns(UserStatus.Idle);
+			configuration.InitialStatus.Returns(InteractionStatus.Idle);
+			_userIdleMonitor.GetStatus().Returns(InteractionStatus.Idle);
 
 			var sut = new RestingMonitor(configuration, _userIdleMonitor);
 
@@ -133,19 +136,18 @@ namespace RestLittle.Tests
 		[Fact]
 		public void Update_WhenTotalIdleTimeLargerThanRestTimePerBusyTime_TotalBusyTimeIsZero()
 		{
-			var configuration = new RestingMonitorConfiguration
-			{
-				InitialStatus = UserStatus.Busy,
-				MaxBusyTime = TimeSpan.MaxValue,
-				RestingTime = TimeSpan.FromSeconds(3),
-			};
+			var configuration = Substitute.For<IRestingMonitorConfiguration>();
+
+			configuration.InitialStatus.Returns(InteractionStatus.Busy);
+			configuration.MaxBusyTime.Returns(TimeSpan.MaxValue);
+			configuration.RestingTime.Returns(TimeSpan.FromSeconds(3));
 
 			var busyTime = TimeSpan.FromSeconds(30);
 
 			var sut = new RestingMonitor(configuration, _userIdleMonitor);
 
 			// Adds lots of busy time
-			_userIdleMonitor.GetStatus().Returns(UserStatus.Busy);
+			_userIdleMonitor.GetStatus().Returns(InteractionStatus.Busy);
 			sut.Update(busyTime);
 
 			// now rest for a while
@@ -153,11 +155,11 @@ namespace RestLittle.Tests
 				.Range(0, 10)
 				.ForEach(_ =>
 				{
-					_userIdleMonitor.GetStatus().Returns(UserStatus.Idle);
+					_userIdleMonitor.GetStatus().Returns(InteractionStatus.Idle);
 					sut.Update(TimeSpan.FromSeconds(1));
 				});
 
-			Assert.Equal(UserStatus.Idle, sut.LastStatus);
+			Assert.Equal(InteractionStatus.Idle, sut.LastStatus);
 			Assert.Equal(TimeSpan.Zero, sut.TotalBusyTimeSinceRested);
 			Assert.Equal(TimeSpan.Zero, sut.TotalIdleTimeSinceRested);
 		}
@@ -165,44 +167,44 @@ namespace RestLittle.Tests
 		[Fact]
 		public void Update_WhenTotalBusyIsZeroAndTotalIdleNotZeroAndUserIsNowBusy_TotalIdleIsZero()
 		{
-			var configuration = new RestingMonitorConfiguration
-			{
-				InitialStatus = UserStatus.Busy,
-				MaxBusyTime = TimeSpan.MaxValue,
-				RestingTime = TimeSpan.FromSeconds(3),
-			};
+			var configuration = Substitute.For<IRestingMonitorConfiguration>();
+
+			configuration.InitialStatus.Returns(InteractionStatus.Busy);
+			configuration.MaxBusyTime.Returns(TimeSpan.MaxValue);
+			configuration.RestingTime.Returns(TimeSpan.FromSeconds(3));
 
 			var busyTime = TimeSpan.FromSeconds(30);
 
 			var sut = new RestingMonitor(configuration, _userIdleMonitor);
 
 			// Adds lots of busy time
-			_userIdleMonitor.GetStatus().Returns(UserStatus.Busy);
+			_userIdleMonitor.GetStatus().Returns(InteractionStatus.Busy);
 			sut.Update(busyTime);
 
 			// now rest for a while
-			_userIdleMonitor.GetStatus().Returns(UserStatus.Idle);
+			_userIdleMonitor.GetStatus().Returns(InteractionStatus.Idle);
 			sut.Update(TimeSpan.FromSeconds(10));
 
 			// and now get busy
-			_userIdleMonitor.GetStatus().Returns(UserStatus.Busy);
+			_userIdleMonitor.GetStatus().Returns(InteractionStatus.Busy);
 			sut.Update(TimeSpan.FromSeconds(1));
 
-			Assert.Equal(UserStatus.Busy, sut.LastStatus);
+			Assert.Equal(InteractionStatus.Busy, sut.LastStatus);
 			Assert.Equal(TimeSpan.Zero, sut.TotalIdleTimeSinceRested);
 		}
 
-		[Theory, AutoData]
-		public void Update_WhenTotalBusyLargerThanMaxBusyTime_ThenMustRestIsTrue(RestingMonitorConfiguration configuration)
+		[Theory, AutoSubstituteData]
+		public void Update_WhenTotalBusyLargerThanMaxBusyTime_ThenMustRestIsTrue(IRestingMonitorConfiguration configuration)
 		{
 			if (configuration is null)
 			{
 				throw new ArgumentNullException(nameof(configuration));
 			}
 
-			_userIdleMonitor.GetStatus().Returns(UserStatus.Busy);
+			configuration.InitialStatus.Returns(InteractionStatus.Busy);
+			configuration.RestingTime.Returns(TimeSpan.MaxValue);
 
-			configuration.InitialStatus = UserStatus.Busy;
+			_userIdleMonitor.GetStatus().Returns(InteractionStatus.Busy);
 
 			var sut = new RestingMonitor(configuration, _userIdleMonitor);
 
@@ -212,16 +214,16 @@ namespace RestLittle.Tests
 			Assert.True(sut.MustRest);
 		}
 
-		[Theory, AutoData]
-		public void Update_WhenTotalBusyLesserThanMaxBusyTime_ThenMustRestIsFalse(RestingMonitorConfiguration configuration)
+		[Theory, AutoSubstituteData]
+		public void Update_WhenTotalBusyLesserThanMaxBusyTime_ThenMustRestIsFalse(IRestingMonitorConfiguration configuration)
 		{
 			if (configuration is null)
 			{
 				throw new ArgumentNullException(nameof(configuration));
 			}
 
-			_userIdleMonitor.GetStatus().Returns(UserStatus.Busy);
-			configuration.InitialStatus = UserStatus.Busy;
+			_userIdleMonitor.GetStatus().Returns(InteractionStatus.Busy);
+			configuration.InitialStatus.Returns(InteractionStatus.Busy);
 
 			var sut = new RestingMonitor(configuration, _userIdleMonitor);
 
@@ -229,15 +231,6 @@ namespace RestLittle.Tests
 			sut.Update(configuration.MaxBusyTime + new TimeSpan(-1));
 
 			Assert.False(sut.MustRest);
-		}
-
-		public class RestingMonitorConfiguration : IRestingMonitorConfiguration
-		{
-			public TimeSpan MaxBusyTime { get; set; }
-
-			public TimeSpan RestingTime { get; set; }
-
-			public UserStatus InitialStatus { get; set; }
 		}
 	}
 }

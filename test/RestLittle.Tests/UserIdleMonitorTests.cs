@@ -26,7 +26,7 @@ namespace RestLittle.Tests
 
 			var actual = sut.GetStatus();
 
-			Assert.Equal(UserStatus.Busy, actual);
+			Assert.Equal(InteractionStatus.Busy, actual);
 		}
 
 		[Theory, AutoSubstituteData]
@@ -49,7 +49,7 @@ namespace RestLittle.Tests
 
 			var actual = sut.GetStatus();
 
-			Assert.Equal(UserStatus.Idle, actual);
+			Assert.Equal(InteractionStatus.Idle, actual);
 		}
 	}
 }

@@ -22,6 +22,6 @@ namespace RestLittle
 		/// <summary>
 		/// Gets the initial status of the <see cref="RestingMonitor"/>.
 		/// </summary>
-		public UserStatus InitialStatus { get; }
+		public InteractionStatus InitialStatus { get; }
 	}
 }

@@ -15,7 +15,7 @@ namespace RestLittle.UI.Models
 		/// <summary>
 		/// Instance of _restingMonitor used by this class.
 		/// </summary>
-		private readonly RestingMonitor _restingMonitor;
+		private readonly IRestingMonitor _restingMonitor;
 
 		/// <summary>
 		/// How long to wait between updates.
@@ -41,7 +41,7 @@ namespace RestLittle.UI.Models
 		/// Initializes a new instance of the <see cref="TrayIconModel"/> class.
 		/// </summary>
 		/// <param name="restingMonitor">Service that monitors user resting time.</param>
-		public TrayIconModel(RestingMonitor restingMonitor)
+		public TrayIconModel(IRestingMonitor restingMonitor)
 		{
 			_stopwatch.Start();
 			_updater = new RepeatingEvent(UpdateMonitor, _updateInterval);
@@ -79,7 +79,23 @@ namespace RestLittle.UI.Models
 		/// <summary>
 		/// Gets the last status of the user.
 		/// </summary>
-		public UserStatus LastStatus => _restingMonitor.LastStatus;
+		public UserStatus LastStatus
+		{
+			get
+			{
+				if (_restingMonitor.MustRest)
+				{
+					return UserStatus.Tired;
+				}
+
+				return _restingMonitor.LastStatus switch
+				{
+					InteractionStatus.Busy => UserStatus.Working,
+					InteractionStatus.Idle => UserStatus.Resting,
+					_ => UserStatus.Working, // default to working
+				};
+			}
+		}
 
 		/// <summary>
 		/// Gets a value indicating whether the user must rest.

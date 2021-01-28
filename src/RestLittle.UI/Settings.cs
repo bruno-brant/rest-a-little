@@ -66,9 +66,9 @@ namespace RestLittle.UI
 		/// <inheritdoc/>
 		[UserScopedSetting]
 		[DefaultSettingValue("Idle")]
-		public UserStatus InitialStatus
+		public InteractionStatus InitialStatus
 		{
-			get { return (UserStatus)this[nameof(InitialStatus)]; }
+			get { return (InteractionStatus)this[nameof(InitialStatus)]; }
 			set { this[nameof(InitialStatus)] = value; }
 		}
 	}
