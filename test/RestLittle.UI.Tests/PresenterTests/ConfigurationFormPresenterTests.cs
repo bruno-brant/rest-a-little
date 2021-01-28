@@ -29,10 +29,10 @@ namespace RestLittle.UI.Tests.PresenterTests
 			{
 				view.Load += Raise.Event();
 
-				Assert.Equal(view.TimeToIdle, model.TimeToIdle.TotalSeconds.ToString(CultureInfo.CurrentCulture));
-				Assert.Equal(view.MaxBusyTime, model.MaxBusyTime.TotalSeconds.ToString(CultureInfo.CurrentCulture));
-				Assert.Equal(view.RestingTime, model.RestingTime.TotalSeconds.ToString(CultureInfo.CurrentCulture));
-				Assert.Equal(view.WarningInterval, model.WarningInterval.TotalSeconds.ToString(CultureInfo.CurrentCulture));
+				Assert.Equal(view.TimeToIdle, model.TimeToIdle);
+				Assert.Equal(view.MaxBusyTime, model.MaxBusyTime);
+				Assert.Equal(view.RestingTime, model.RestingTime);
+				Assert.Equal(view.WarningInterval, model.WarningInterval);
 			}
 		}
 
@@ -64,13 +64,14 @@ namespace RestLittle.UI.Tests.PresenterTests
 
 			var view = Substitute.For<IConfigurationFormView>();
 
-			view.MaxBusyTime.Returns(time.ToString(CultureInfo.InvariantCulture));
-			view.RestingTime.Returns(time.ToString(CultureInfo.InvariantCulture));
-			view.TimeToIdle.Returns(time.ToString(CultureInfo.InvariantCulture));
-			view.WarningInterval.Returns(time.ToString(CultureInfo.InvariantCulture));
+			view.MaxBusyTime.Returns(TimeSpan.FromSeconds(time));
+			view.RestingTime.Returns(TimeSpan.FromSeconds(time));
+			view.TimeToIdle.Returns(TimeSpan.FromSeconds(time));
+			view.WarningInterval.Returns(TimeSpan.FromSeconds(time));
 
 			// capture the strings (for debugging purposes)
 			string name, errorMsg;
+
 			view.When(_ =>
 				_.SetError(
 					Arg.Do<string>(_ => name = _),
@@ -80,10 +81,10 @@ namespace RestLittle.UI.Tests.PresenterTests
 			{
 				view.Accepted += Raise.Event();
 
-				Assert.Equal(view.MaxBusyTime, model.MaxBusyTime.TotalSeconds.ToString(CultureInfo.InvariantCulture));
-				Assert.Equal(view.RestingTime, model.RestingTime.TotalSeconds.ToString(CultureInfo.InvariantCulture));
-				Assert.Equal(view.TimeToIdle, model.TimeToIdle.TotalSeconds.ToString(CultureInfo.InvariantCulture));
-				Assert.Equal(view.WarningInterval, model.WarningInterval.TotalSeconds.ToString(CultureInfo.InvariantCulture));
+				Assert.Equal(view.MaxBusyTime, model.MaxBusyTime);
+				Assert.Equal(view.RestingTime, model.RestingTime);
+				Assert.Equal(view.TimeToIdle, model.TimeToIdle);
+				Assert.Equal(view.WarningInterval, model.WarningInterval);
 
 				view.DidNotReceive().SetError(Arg.Any<string>(), Arg.Any<string>());
 				view.Received().Close();
@@ -100,19 +101,19 @@ namespace RestLittle.UI.Tests.PresenterTests
 
 			var view = Substitute.For<IConfigurationFormView>();
 
-			view.TimeToIdle.Returns((-1).ToString(CultureInfo.InvariantCulture)); // invalid data
-			view.MaxBusyTime.Returns(_fixture.Create<int>().ToString(CultureInfo.InvariantCulture));
-			view.RestingTime.Returns(_fixture.Create<int>().ToString(CultureInfo.InvariantCulture));
-			view.WarningInterval.Returns(_fixture.Create<int>().ToString(CultureInfo.InvariantCulture));
+			view.TimeToIdle.Returns(TimeSpan.FromSeconds(-1)); // invalid data
+			view.MaxBusyTime.Returns(_fixture.Create<TimeSpan>());
+			view.RestingTime.Returns(_fixture.Create<TimeSpan>());
+			view.WarningInterval.Returns(_fixture.Create<TimeSpan>());
 
 			using (new ConfigurationFormPresenter(view, model))
 			{
 				view.Accepted += Raise.Event();
 
-				Assert.Equal(view.MaxBusyTime, model.MaxBusyTime.TotalSeconds.ToString(CultureInfo.InvariantCulture));
-				Assert.Equal(view.RestingTime, model.RestingTime.TotalSeconds.ToString(CultureInfo.InvariantCulture));
-				Assert.Equal(view.TimeToIdle, model.TimeToIdle.TotalSeconds.ToString(CultureInfo.InvariantCulture));
-				Assert.Equal(view.WarningInterval, model.WarningInterval.TotalSeconds.ToString(CultureInfo.InvariantCulture));
+				Assert.Equal(view.MaxBusyTime, model.MaxBusyTime);
+				Assert.Equal(view.RestingTime, model.RestingTime);
+				Assert.Equal(view.TimeToIdle, model.TimeToIdle);
+				Assert.Equal(view.WarningInterval, model.WarningInterval);
 
 				view.DidNotReceive().Close();
 

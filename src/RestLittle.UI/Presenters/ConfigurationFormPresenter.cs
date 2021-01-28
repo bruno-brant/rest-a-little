@@ -66,10 +66,10 @@ namespace RestLittle.UI.Presenters
 		/// <param name="e">The arguments of the event.</param>
 		private void View_Accepted(object sender, EventArgs e)
 		{
-			Model.TimeToIdle = FromSeconds(View.TimeToIdle);
-			Model.MaxBusyTime = FromSeconds(View.MaxBusyTime);
-			Model.RestingTime = FromSeconds(View.RestingTime);
-			Model.WarningInterval = FromSeconds(View.WarningInterval);
+			Model.TimeToIdle = View.TimeToIdle;
+			Model.MaxBusyTime = View.MaxBusyTime;
+			Model.RestingTime = View.RestingTime;
+			Model.WarningInterval = View.WarningInterval;
 
 			if (Validator2.TryValidateObject(Model, out var validationResults))
 			{
@@ -104,10 +104,10 @@ namespace RestLittle.UI.Presenters
 			// TODO: Use settings as the model?
 			Model.Reload();
 
-			View.TimeToIdle = Model.TimeToIdle.TotalSeconds.ToString(CultureInfo.CurrentCulture);
-			View.MaxBusyTime = Model.MaxBusyTime.TotalSeconds.ToString(CultureInfo.CurrentCulture);
-			View.RestingTime = Model.RestingTime.TotalSeconds.ToString(CultureInfo.CurrentCulture);
-			View.WarningInterval = Model.WarningInterval.TotalSeconds.ToString(CultureInfo.CurrentCulture);
+			View.TimeToIdle = Model.TimeToIdle;
+			View.MaxBusyTime = Model.MaxBusyTime;
+			View.RestingTime = Model.RestingTime;
+			View.WarningInterval = Model.WarningInterval;
 		}
 	}
 }

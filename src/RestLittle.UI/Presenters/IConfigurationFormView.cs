@@ -27,22 +27,22 @@ namespace RestLittle.UI.Presenters
 		/// <summary>
 		/// Gets or sets how long the user must be inactive to be considered idle.
 		/// </summary>
-		string TimeToIdle { get; set; }
+		TimeSpan TimeToIdle { get; set; }
 
 		/// <summary>
 		/// Gets or sets how long the user can be working without resting.
 		/// </summary>
-		string MaxBusyTime { get; set; }
+		TimeSpan MaxBusyTime { get; set; }
 
 		/// <summary>
 		/// Gets or sets how long should the user rest for each busy time session.
 		/// </summary>
-		string RestingTime { get; set; }
+		TimeSpan RestingTime { get; set; }
 
 		/// <summary>
 		/// Gets or sets interval between warning calls.
 		/// </summary>
-		string WarningInterval { get; set; }
+		TimeSpan WarningInterval { get; set; }
 
 		/// <summary>
 		/// Closes the view.
