@@ -1,5 +1,5 @@
 ![logo](https://raw.githubusercontent.com/bruno-brant/rest-a-little/master/logo.png) 
-Rest-a-little 
+Take-A-Break
 =============
 
 Small Windows utility to remind the user it's time to take a break from the computer.
