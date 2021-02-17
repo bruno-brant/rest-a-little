@@ -6,7 +6,7 @@ Small Windows utility to remind the user it's time to take a break from the comp
 
 Why?
 ----
-I have a problematic case of RSI and need to take regular breaks from the computer. However, when I'm [concetrated](https://en.wikipedia.org/wiki/Flow_(psychology)) I can go for hours, ignoring all signs from my body that it's time to stop. This utility runs in the background and warns me if I go too long without a break.
+I have a problematic case of RSI and need to take regular breaks from the computer. However, when I'm [concentrating](https://en.wikipedia.org/wiki/Flow_(psychology)) I can go for hours, ignoring all signs from my body that it's time to stop. This utility runs in the background and warns me if I go too long without a break.
 
 How?
 ----
