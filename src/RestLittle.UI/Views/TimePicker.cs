@@ -29,7 +29,7 @@ namespace RestLittle.UI.Views
 		{
 			get
 			{
-				return Value - DateTime.MinValue;
+				return Value - MinDate;
 			}
 
 			set
