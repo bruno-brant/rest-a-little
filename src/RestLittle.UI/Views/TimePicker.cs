@@ -18,6 +18,8 @@ namespace RestLittle.UI.Views
 			Format = DateTimePickerFormat.Custom;
 			CustomFormat = "mmm minutes ss seconds";
 			ShowUpDown = true;
+			MinDate = DateTime.MinValue;
+			MaxDate = MinDate.AddDays(1).AddSeconds(-1);
 		}
 
 		/// <summary>
@@ -27,12 +29,12 @@ namespace RestLittle.UI.Views
 		{
 			get
 			{
-				return Value - DateTime.Today;
+				return Value - DateTime.MinValue;
 			}
 
 			set
 			{
-				Value = DateTime.Today + value;
+				Value = MinDate + value;
 			}
 		}
 
@@ -40,9 +42,6 @@ namespace RestLittle.UI.Views
 		protected override void OnCreateControl()
 		{
 			base.OnCreateControl();
-
-			MinDate = DateTime.Today;
-			MaxDate = DateTime.Today.AddDays(1).AddSeconds(-1);
 		}
 	}
 }
